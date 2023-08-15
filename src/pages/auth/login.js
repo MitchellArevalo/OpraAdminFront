@@ -20,6 +20,7 @@ import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import LoadingButton from '@mui/lab/LoadingButton';
 import MainLoading from 'src/components/mainLoading'
+import AlertMessage from 'src/components/alertMessage';
 
 const Page = () => {
   const router = useRouter();
@@ -28,6 +29,12 @@ const Page = () => {
   const [loadingData, setLoadingData] = useState(false)
   const [method, setMethod] = useState('email');
   const [loading, setLoading] = useState(false);
+  const [error, setOpenError] = useState(false);
+  const [notificationData, setNotificationData] = useState({
+    error:error,
+    typeError:"",
+    messageError:""
+  })
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -53,6 +60,7 @@ const Page = () => {
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
+        setLoading(false);
         helpers.setSubmitting(false);
       }
     }
@@ -70,6 +78,11 @@ const Page = () => {
         .catch(error => {
           // Manejar el error
           console.error('Error:', error);
+          setNotificationData({...notificationData,
+          error: true,
+          typeError:"error",
+          messageError:"Ocurrió un error al intentar conectarse con el servidor"
+          })
         }); 
 
         // setTimeout(() => {
@@ -189,7 +202,12 @@ const Page = () => {
               </form>
            
           </Box>
-            
+          <AlertMessage
+            open = {notificationData?.error}
+            setOpen = {setOpenError}
+            type = {notificationData?.typeError}
+            message={notificationData?.messageError}
+            />
         </Box>
           <Box sx={{ 
             width: '50%',
@@ -208,7 +226,15 @@ const Page = () => {
           </Box>
     </Box>
     :
+    <>
     <MainLoading/>
+    <AlertMessage
+    open = {notificationData?.error}
+    setOpen = {setOpenError}
+    type = {notificationData?.typeError}
+    message={notificationData?.messageError}
+    />
+    </>
     }
     </> 
   );

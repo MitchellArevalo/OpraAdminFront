@@ -11,41 +11,54 @@ import {
   Unstable_Grid2 as Grid
 } from '@mui/material';
 
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama'
-  },
-  {
-    value: 'new-york',
-    label: 'New York'
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco'
-  },
-  {
-    value: 'Palmira Valle del Cauca',
-    label: 'Palmira Valle del Cauca'
-  }
-];
 
-export const AccountProfileDetails = () => {
+export const AccountProfileDetails = (props) => {
+
+  const { user } = props
+
+  const initialValues = {
+    username: user.username,
+    documento: user.documento,
+    nombre: user.nombre,
+    email: user.email,
+    numeroTelefonico: user.numeroTelefonico,
+  }
+
   const [values, setValues] = useState({
-    firstName: 'Mitchell Andrés',
-    lastName: 'Arévalo Henao',
-    email: 'Admin@Opra.com',
-    phone: '+57 3137228485',
-    state: 'Palmira Valle del Cauca',
-    country: 'COL'
+    username: initialValues.username,
+    documento: initialValues.documento,
+    nombre: initialValues.nombre,
+    email: initialValues.email,
+    numeroTelefonico: initialValues.numeroTelefonico,
   });
+
+  function formatPhoneNumber(phoneNumber) {
+    const cleaned = ('' + phoneNumber).replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+  
+    if (match) {
+      return '(' + match[1] + ') ' + match[2] + '-' + match[3];
+    }
+  
+    return null;
+  }
 
   const handleChange = useCallback(
     (event) => {
-      setValues((prevState) => ({
-        ...prevState,
-        [event.target.name]: event.target.value
-      }));
+      switch (event.target.name) {
+        case 'numeroTelefonico':
+          alert('este es el numero telefonico')
+          break;
+      
+        default:
+          setValues((prevState) => ({
+            ...prevState,
+            [event.target.name]: event.target.value
+          }));
+          break;
+      }
+
+      
     },
     []
   );
@@ -57,113 +70,72 @@ export const AccountProfileDetails = () => {
     []
   );
 
+  const testFieldCss = {
+    width: '48%',
+    margin: '1% 1%'
+  }
+
   return (
-    <form
-      autoComplete="off"
-      noValidate
-      onSubmit={handleSubmit}
-    >
       <Card>
         <CardHeader
           subheader="Esta información puede ser editada"
           title="Perfil"
         />
         <CardContent sx={{ pt: 0 }}>
-          <Box sx={{ m: -1.5 }}>
-            <Grid
-              container
-              spacing={3}
-            >
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Nombres"
-                  name="firstName"
-                  onChange={handleChange}
-                  required
-                  value={values.firstName}
-                />
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Apellidos"
-                  name="lastName"
-                  onChange={handleChange}
-                  required
-                  value={values.lastName}
-                />
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Correo Electrónico"
-                  name="email"
-                  onChange={handleChange}
-                  required
-                  value={values.email}
-                />
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Phone Number"
-                  name="phone"
-                  onChange={handleChange}
-                  type="number"
-                  value={values.phone}
-                />
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="País"
-                  name="country"
-                  onChange={handleChange}
-                  required
-                  value={values.country}
-                />
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Ciudad / Departamento"
-                  name="state"
-                  onChange={handleChange}
-                  required
-                  select
-                  SelectProps={{ native: true }}
-                  value={values.state}
-                >
-                  {states.map((option) => (
-                    <option
-                      key={option.value}
-                      value={option.value}
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </TextField>
-              </Grid>
-            </Grid>
+          <Box sx={{ 
+            display: 'flex',
+            flexWrap: 'wrap'
+           }}>
+              <TextField
+                fullWidth
+                label="Nombre completo*"
+                name="nombre"
+                onChange={handleChange}
+                required
+                value={values?.nombre}
+                sx={testFieldCss}
+              />
+
+              <TextField
+                fullWidth
+                label="Documento*"
+                name="documento"
+                onChange={handleChange}
+                required
+                value={values?.documento}
+                sx={testFieldCss}
+              />
+            
+              <TextField
+                fullWidth
+                label="Nombre de usuario*"
+                name="username"
+                onChange={handleChange}
+                required
+                value={values?.username}
+                sx={testFieldCss}
+              />
+            
+              <TextField
+                fullWidth
+                label="Correo Electrónico"
+                name="email"
+                onChange={handleChange}
+                required
+                value={values?.email}
+                sx={testFieldCss}
+              />
+            
+              <TextField
+                fullWidth
+                label="Número teléfonico"
+                name="numeroTelefonico"
+                onChange={handleChange}
+                type="text"
+                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                value={formatPhoneNumber(values?.numeroTelefonico)}
+                sx={testFieldCss}
+              />
           </Box>
         </CardContent>
         <Divider />
@@ -173,6 +145,5 @@ export const AccountProfileDetails = () => {
           </Button>
         </CardActions>
       </Card>
-    </form>
   );
 };

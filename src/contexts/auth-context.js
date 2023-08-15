@@ -81,11 +81,24 @@ export const AuthProvider = (props) => {
     }
 
     if (isAuthenticated) {
+      
+      const userDataJson = window.sessionStorage.getItem('userData');
+      const userData = JSON.parse(userDataJson);
+      console.log(userData)
+
       const user = {
-        id: '5e86809283e28b96d2d38537',
-        avatar: '/assets/avatars/avatar-anika-visser.png',
-        name: 'Mitchell desde contexto',
-        email: 'Admin@Opra.com'
+        idPersona: userData.idPersona,
+        avatar: userData.avatar,
+        username: userData.username,
+        contrasena: userData.contraseña,
+        documento: userData.documento,
+        nombre: userData.nombre,
+        email: userData.email,
+        numeroTelefonico: userData.numeroTelefonico,
+        rol: {
+            idRol: userData.rol.idRol,
+            nombre: userData.rol.nombre
+        }
       };
 
       dispatch({
@@ -105,26 +118,6 @@ export const AuthProvider = (props) => {
     },
     []
   );
-
-  const skip = () => {
-    try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-    }
-
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Mitchell contexto2',
-      email: 'Admin@Opra.com'
-    };//Usuario que ya tiene iniciada la sesion para skipear
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
-  };
   
   const signIn = async (email, password, data) => {
     
@@ -148,6 +141,7 @@ export const AuthProvider = (props) => {
 
     try {
       window.sessionStorage.setItem('authenticated', 'true');
+      
     } catch (err) {
       console.error(err);
     }
@@ -162,21 +156,18 @@ export const AuthProvider = (props) => {
       email: filteredData[0].email,
       numeroTelefonico: filteredData[0].numeroTelefonico,
       rol: {
-          idRol: filteredData[0].rol.idRol,
-          nombre: filteredData[0].rol.nombre
+        idRol: filteredData[0].rol.idRol,
+        nombre: filteredData[0].rol.nombre
       }
-      // id: '5e86809283e28b96d2d38537',
-      // avatar: '/assets/avatars/avatar-anika-visser.png',
-      // name: 'Mitchell Arévalo',
-      // email: 'Admin@Opra.com'
     };
+    window.sessionStorage.setItem('userData', JSON.stringify(user));
 
     dispatch({
       type: HANDLERS.SIGN_IN,
       payload: user
     });
   };
-
+  
   const signUp = async (email, name, password) => {
     throw new Error('Error con el inicio de sesión');
   };
@@ -191,7 +182,6 @@ export const AuthProvider = (props) => {
     <AuthContext.Provider
       value={{
         ...state,
-        skip,
         signIn,
         signUp,
         signOut,

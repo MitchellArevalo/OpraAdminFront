@@ -24,6 +24,7 @@ export const AccountPopover = (props) => {
     onClose?.();
     router.push(event.target.id);
   }
+  // console.log(auth);
 
   return (
     <Popover

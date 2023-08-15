@@ -9,51 +9,57 @@ import {
   Typography
 } from '@mui/material';
 
-const user = {
-  avatar: '/assets/avatars/avatar-jie-yan-song.png',
-  city: 'Palmira Valle del Cauca',
-  country: 'COL',
-  jobTitle: 'Desarrollador Junior',
-  name: 'Mitchell Arévalo',
-  timezone: 'GTM-7'
-};
 
-export const AccountProfile = () => (
+export const AccountProfile = (props) => (
   <Card>
     <CardContent>
       <Box
         sx={{
           alignItems: 'center',
           display: 'flex',
-          flexDirection: 'column'
+          // flexDirection: 'column'
         }}
       >
-        <Avatar
-          src={user.avatar}
-          sx={{
-            height: 80,
-            mb: 2,
-            width: 80
-          }}
-        />
+        <Box
+        sx={{
+          width: '50%',
+          display: 'flex',
+          justifyContent: 'right',
+          alignItems: 'center',
+          height: 200
+        }}>
+          <Avatar
+            src={props.user == null?'':props.user.avatar}
+            sx={{
+              height: 200,
+              m:5,
+              width: 200
+            }}
+          />
+        </Box>
+        <Box
+        sx={{
+          width: '50%'
+        }}>
         <Typography
           gutterBottom
           variant="h5"
         >
-          {user.name}
+          {props.user == null?'':props.user.nombre}
         </Typography>
         <Typography
           color="text.secondary"
           variant="body2"
         >
-          {user.city} {user.country}
+          {props.user == null?'':props.user.email}
         </Typography>
         <Typography
           color="text.secondary"
           variant="body2"
         >
-          {user.jobTitle}
+          {props.user == null?'':props.user.rol.nombre}
         </Typography>
+        </Box>
       </Box>
     </CardContent>
     <Divider />

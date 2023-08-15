@@ -687,6 +687,8 @@ const Page = () => {
                                 sx={{ width: '49%'}}
                                 InputProps={{
                                   startAdornment: <InputAdornment position="start">CC</InputAdornment>,
+                                  inputMode: 'numeric',
+                                  pattern: '[0-9]*' 
                                 }}
                               />
                               <TextField
@@ -722,6 +724,8 @@ const Page = () => {
                                 sx={{ width: '49%'}}
                                 InputProps={{
                                   startAdornment: <InputAdornment position="start">#</InputAdornment>,
+                                  inputMode: 'numeric', 
+                                  pattern: '[0-9]*' 
                                 }}
                               />
                                <FormControl variant="filled" 
