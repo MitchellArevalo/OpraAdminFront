@@ -28,6 +28,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ExportToExcel from 'src/components/exportToExcel';
 import { display, height } from '@mui/system';
 import { success } from 'src/theme/colors';
 
@@ -318,16 +319,9 @@ const styleFieldsModalMobile = {
                 >
                   Importar
                 </Button>
-                <Button
-                  color="inherit"
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <ArrowDownOnSquareIcon />
-                    </SvgIcon>
-                  )}
-                >
-                  Exportar
-                </Button>
+                <ExportToExcel 
+                  data={productos}
+                  mainComponent={'Inventario'}/>
               </Stack>
             </Stack>
             <div>

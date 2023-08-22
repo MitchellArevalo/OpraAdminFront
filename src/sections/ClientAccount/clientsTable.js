@@ -139,21 +139,7 @@ function formatPhoneNumber(phoneNumber) {
             </TableBody>
           </Table>
         </TableContainer>
-        }
-        {props.busquedaFallida?
-          ''
-                    :
-          <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={props.data.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-          
-        }        
+        }       
       </Paper>
     );
   }

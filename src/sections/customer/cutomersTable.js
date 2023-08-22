@@ -27,31 +27,31 @@ function formatPhoneNumber(phoneNumber) {
     { 
         id: 'avatar',
         label: 'Foto', 
-        minWidth: 150,
+        minWidth: 200,
         align: 'center',
     },
     { 
         id: 'nombre', 
         label: 'Nombre',
-        minWidth: 170 ,
+        minWidth: 200 ,
         align: 'center'
     },
     {
       id: 'rol.nombre',
       label: 'Rol',
-      minWidth: 150,
+      minWidth: 80,
       align: 'center',
     },
     {
       id: 'email',
       label: 'Correo electrónico',
-      minWidth: 170,
+      minWidth: 200,
       align: 'center',
     },
     {
       id: 'numeroTelefonico',
       label: 'Celular',
-      minWidth: 170,
+      minWidth: 200,
       align: 'center',
     },
   ];
@@ -70,14 +70,14 @@ function formatPhoneNumber(phoneNumber) {
     };
   
     return (
-      <Paper sx={{ width: '100%' }}>
+      <Paper sx={{ width: '100%', height: '60vh' }}>
         {
           props.busquedaFallida?
           <Box
           sx={{
             width: '100%',
-            height: '40vh',
-            // backgroundColor: 'red'
+            height: '100%',
+            backgroundColor: 'red'
           }}>
         <Box
           sx={{
@@ -104,7 +104,7 @@ function formatPhoneNumber(phoneNumber) {
       </Box>
           :
 
-          <TableContainer sx={{ maxHeight: '50vh' }}>
+          <TableContainer sx={{ maxHeight: '100%' }}>
           <Table stickyHeader 
           aria-label="sticky table">
             <TableHead>
@@ -128,15 +128,21 @@ function formatPhoneNumber(phoneNumber) {
                          >
                                 <TableCell
                                 sx={{
-                                    width: '10%',
-                                    // backgroundColor: 'red',
-                                    textAlign: 'center',
-                                    verticalAlign: 'center'
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  width: '150px',
+                                  height: '150px', 
+                                  borderRadius: '50%', 
+                                  overflow: 'hidden'
+                                  // backgroundColor:'red'
                                 }}>
                                     <img style={{
-                                    width: '80%',
-                                    borderRadius: '100%',
+                                    width: '100%',
+                                    height: '100%',
                                     objectFit: 'contain',
+                                    borderRadius: '50%', 
+                                    // backgroundColor: 'white'
                                     // filter : 'saturate(50%)'
                                 }} 
                                 src={data.avatar.includes('base64')?data.avatar:'https://www.dl.dropboxusercontent.com/scl/fi/uuew6bjab92ehc4aeugai/UserGray.png?rlkey=pcy2659qro6fxtqjsctpw6ytl&dl=0'}/></TableCell>
@@ -155,21 +161,7 @@ function formatPhoneNumber(phoneNumber) {
             </TableBody>
           </Table>
         </TableContainer>
-        }
-        {props.busquedaFallida?
-          ''
-                    :
-          <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={props.data.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-          
-        }        
+        }   
       </Paper>
     );
   }

@@ -61,7 +61,6 @@ export const SideNav = (props) => {
               alignItems: 'center',
               backgroundColor: 'rgba(255, 255, 255, 0.04)',
               borderRadius: 1,
-              cursor: 'pointer',
               display: 'flex',
               justifyContent: 'space-between',
               mt: 2,
@@ -86,7 +85,6 @@ export const SideNav = (props) => {
               fontSize="small"
               sx={{ color: 'neutral.500' }}
             >
-              <ChevronUpDownIcon />
             </SvgIcon>
           </Box>
         </Box>

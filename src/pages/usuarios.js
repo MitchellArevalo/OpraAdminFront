@@ -17,6 +17,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AlertMessage from 'src/components/alertMessage';
 import EmailIcon from '@mui/icons-material/Email';
+import ExportToExcel from 'src/components/exportToExcel';
 
 ////Estilos Desktop/////
 const styleModal = {
@@ -519,6 +520,10 @@ const Page = () => {
         setMessageError('Ocurrió un error: ' + error)
       });
   }
+  const usersWithOutImage = data.map(user => {
+    const { contrasena, avatar, rol, ...rest } = user;
+    return { ...rest, rol: rol.nombre };
+  });
 
   return (
     <>
@@ -560,16 +565,9 @@ const Page = () => {
                   >
                     Importar
                   </Button>
-                  <Button
-                    color="inherit"
-                    startIcon={(
-                      <SvgIcon fontSize="small">
-                        <ArrowDownOnSquareIcon />
-                      </SvgIcon>
-                    )}
-                  >
-                    Exportar
-                  </Button>
+                  <ExportToExcel 
+                  data={usersWithOutImage}
+                  mainComponent={'Usuarios'}/>
                 </Stack>
               </Stack>
               <div>

@@ -8,6 +8,7 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import ClientsTable from 'src/sections/ClientAccount/clientsTable';
 import CircularProgress from '@mui/material/CircularProgress';
 import ClientsSearch from 'src/sections/ClientAccount/clients-search';
+import ExportToExcel from 'src/components/exportToExcel';
 
 const Page = () => {
   const [data, setData] = useState([]);
@@ -47,6 +48,10 @@ const Page = () => {
     }
   ]
 
+  const clientsWithoutPasswords = clientsMocked.map(client => {
+    const { contrasena, ...rest } = client; // Destructura el objeto y excluye 'contrasena'
+    return rest; // Retorna el objeto sin 'contrasena'
+  });
   useEffect(() => {
 
     setLoadingUsers(false)
@@ -69,7 +74,7 @@ const Page = () => {
     //     setMessageError('Ocurrió un error inesperado, consulte con su administrador')
     //   });
     setTimeout(() => {
-      setData(clientsMocked);
+      setData(clientsWithoutPasswords);
       setLoadingUsers(true);
     }, 3000);
 
@@ -115,16 +120,9 @@ const Page = () => {
                   >
                     Importar
                   </Button>
-                  <Button
-                    color="inherit"
-                    startIcon={(
-                      <SvgIcon fontSize="small">
-                        <ArrowDownOnSquareIcon />
-                      </SvgIcon>
-                    )}
-                  >
-                    Exportar
-                  </Button>
+                  <ExportToExcel 
+                  data={data}
+                  mainComponent={'Clientes'}/>
                 </Stack>
               </Stack>
               <div>
