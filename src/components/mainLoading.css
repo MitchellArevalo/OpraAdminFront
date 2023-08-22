@@ -1,3 +1,8 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 .mainDivLoader{
     width: 100vw;
     background-color: black;
@@ -152,4 +157,48 @@
       transform: rotate3d(1, 1, 1, 220deg)  scale(.95);
     }
   }
+
+  .ImageCarouselLoginPage{
+    /* transition: 5; */
+    width: 50%;
+    height: 100%;
+    object-fit: cover;
+    animation: blurout 3s infinite;
+    filter: blur(5px);
+  }
   
+  @keyframes blurout {
+    0% {
+      filter: blur(5);
+    }
+    10% {
+      filter: blur(4);
+    }
+    20% {
+      filter: blur(3);
+    }
+    30% {
+      filter: blur(2);
+    }
+    40% {
+      filter: blur(1);
+    }
+    50% {
+      filter: blur(0);
+    }
+    60% {
+      filter: blur(1);
+    }
+    70% {
+      filter: blur(2);
+    }
+    80% {
+      filter: blur(3);
+    }
+    90% {
+      filter: blur(4);
+    }
+    100% {
+      filter: blur(5);
+    }
+  }

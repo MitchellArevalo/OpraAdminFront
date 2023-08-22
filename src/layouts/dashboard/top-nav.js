@@ -52,7 +52,7 @@ export const TopNav = (props) => {
           spacing={2}
           sx={{
             minHeight: TOP_NAV_HEIGHT,
-            px: 2
+            px: 5
           }}
         >
           <Stack
@@ -67,34 +67,37 @@ export const TopNav = (props) => {
                 </SvgIcon>
               </IconButton>
             )}
-            <Tooltip title="Search">
+            {/* <Tooltip title="Search">
               <IconButton>
                 <SvgIcon fontSize="small">
                   <MagnifyingGlassIcon />
                 </SvgIcon>
               </IconButton>
-            </Tooltip>
+            </Tooltip> 
+            ////// Este es el buscador global///////*/}
+            
           </Stack>
           <Stack
             alignItems="center"
             direction="row"
             spacing={2}
           >
-            <Tooltip title="Contacts">
+            {/* <Tooltip title="Contacts">
               <IconButton>
                 <SvgIcon fontSize="small">
                   <UsersIcon />
                 </SvgIcon>
               </IconButton>
-            </Tooltip>
+            </Tooltip> 
+            ///////Este es el logo de los contactos en la parte superior////////*/}
             <Tooltip title="Notifications">
               <IconButton>
                 <Badge
-                  badgeContent={4}
+                  badgeContent={10}
                   color="success"
                   variant="dot"
                 >
-                  <SvgIcon fontSize="small">
+                  <SvgIcon fontSize="medium">
                     <BellIcon />
                   </SvgIcon>
                 </Badge>
@@ -105,8 +108,8 @@ export const TopNav = (props) => {
               ref={accountPopover.anchorRef}
               sx={{
                 cursor: 'pointer',
-                height: 40,
-                width: 40
+                height: 45,
+                width: 45
               }}
               src={auth.user == null?'':auth.user.avatar}
             />

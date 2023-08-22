@@ -5,7 +5,8 @@ import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
 import UserIcon from '@heroicons/react/24/solid/UserIcon';
 import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
-import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
+import LocalMallIcon from '@mui/icons-material/LocalMall';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import { SvgIcon } from '@mui/material';
 
 export const items = [
@@ -20,26 +21,25 @@ export const items = [
   },
   {
     title: 'Usuarios',
-    path: '/customers',
+    path: '/usuarios',
     icon: (
       <SvgIcon fontSize="small">
-        <UsersIcon />
+         <UserIcon />
       </SvgIcon>
     )
   },
   {
     title: 'Inventario',
-    path: '/companies',
+    path: '/inventario',
     icon: (
       <SvgIcon fontSize="small">
         <ShoppingBagIcon />
       </SvgIcon>
     )
   },
-  ,
   {
     title: 'Clientes',
-    path: '/Clientes',
+    path: '/clientes',
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />
@@ -47,11 +47,20 @@ export const items = [
     )
   },
   {
-    title: 'Cuenta',
-    path: '/account',
+    title: 'Ventas',
+    path: '/ventas',
     icon: (
       <SvgIcon fontSize="small">
-        <UserIcon />
+        <LocalMallIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Entradas / Salidas',
+    path: '/entradasSalidas',
+    icon: (
+      <SvgIcon fontSize="small">
+        <InventoryIcon />
       </SvgIcon>
     )
   }

@@ -84,13 +84,14 @@ export const AuthProvider = (props) => {
       
       const userDataJson = window.sessionStorage.getItem('userData');
       const userData = JSON.parse(userDataJson);
-      console.log(userData)
+      // console.log(userData)
+      // console.log(userData.contrasena);
 
       const user = {
         idPersona: userData.idPersona,
         avatar: userData.avatar,
         username: userData.username,
-        contrasena: userData.contraseña,
+        contrasena: userData.contrasena,
         documento: userData.documento,
         nombre: userData.nombre,
         email: userData.email,
@@ -150,7 +151,7 @@ export const AuthProvider = (props) => {
       idPersona: filteredData[0].idPersona,
       avatar: filteredData[0].avatar,
       username: filteredData[0].username,
-      contrasena: filteredData[0].contraseña,
+      contrasena: filteredData[0].contrasena,
       documento: filteredData[0].documento,
       nombre: filteredData[0].nombre,
       email: filteredData[0].email,

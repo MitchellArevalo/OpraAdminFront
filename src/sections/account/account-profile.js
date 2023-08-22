@@ -15,8 +15,11 @@ export const AccountProfile = (props) => (
     <CardContent>
       <Box
         sx={{
-          alignItems: 'center',
+          alignItems: 'top',
+          justifyContent: 'center',
           display: 'flex',
+          height: '40vh',
+          // backgroundColor: 'blue'
           // flexDirection: 'column'
         }}
       >
@@ -26,7 +29,9 @@ export const AccountProfile = (props) => (
           display: 'flex',
           justifyContent: 'right',
           alignItems: 'center',
-          height: 200
+          margin: '2px',
+          height: 200,
+          // backgroundColor: 'red'
         }}>
           <Avatar
             src={props.user == null?'':props.user.avatar}
@@ -39,7 +44,10 @@ export const AccountProfile = (props) => (
         </Box>
         <Box
         sx={{
-          width: '50%'
+          width: '50%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
         }}>
         <Typography
           gutterBottom

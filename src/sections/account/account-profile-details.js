@@ -17,11 +17,11 @@ export const AccountProfileDetails = (props) => {
   const { user } = props
 
   const initialValues = {
-    username: user.username,
-    documento: user.documento,
-    nombre: user.nombre,
-    email: user.email,
-    numeroTelefonico: user.numeroTelefonico,
+    username: user == null?'':user.username,
+    documento: user == null?'':user.documento,
+    nombre: user == null?'':user.nombre,
+    email: user == null?'':user.email,
+    numeroTelefonico: user == null?'':user.numeroTelefonico,
   }
 
   const [values, setValues] = useState({
@@ -43,25 +43,17 @@ export const AccountProfileDetails = (props) => {
     return null;
   }
 
-  const handleChange = useCallback(
-    (event) => {
-      switch (event.target.name) {
-        case 'numeroTelefonico':
-          alert('este es el numero telefonico')
-          break;
-      
-        default:
-          setValues((prevState) => ({
-            ...prevState,
-            [event.target.name]: event.target.value
-          }));
-          break;
-      }
+  const handleChange = useCallback((event) => {
+   
+        setValues((prevState) => ({
+          ...prevState,
+          [event.target.name]: event.target.value
+        }));
+  }, []);
 
-      
-    },
-    []
-  );
+  const saveChanges = (event) => {
+    console.log(values);
+  }
 
   const handleSubmit = useCallback(
     (event) => {
@@ -131,16 +123,18 @@ export const AccountProfileDetails = (props) => {
                 label="Número teléfonico"
                 name="numeroTelefonico"
                 onChange={handleChange}
-                type="text"
+                type="number"
                 inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                value={formatPhoneNumber(values?.numeroTelefonico)}
+                value={values?.numeroTelefonico}
                 sx={testFieldCss}
               />
           </Box>
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">
+          <Button 
+          onClick={saveChanges}
+          variant="contained">
             Guardar
           </Button>
         </CardActions>

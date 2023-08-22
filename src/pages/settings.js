@@ -45,7 +45,7 @@ import { useAuth } from 'src/hooks/use-auth';
                   <Box
                   sx={{
                     // backgroundColor: 'red',
-                    height: '80vh',
+                    height: '130vh',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between'

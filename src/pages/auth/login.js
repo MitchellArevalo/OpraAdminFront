@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
+import { CCarousel, CCarouselItem, CImage } from '@coreui/react'
 import LoadingButton from '@mui/lab/LoadingButton';
 import MainLoading from 'src/components/mainLoading'
 import AlertMessage from 'src/components/alertMessage';
@@ -30,10 +31,11 @@ const Page = () => {
   const [method, setMethod] = useState('email');
   const [loading, setLoading] = useState(false);
   const [error, setOpenError] = useState(false);
+  const [image, setimage] = useState(1);
   const [notificationData, setNotificationData] = useState({
-    error:error,
-    typeError:"",
-    messageError:""
+    error: error,
+    typeError: "",
+    messageError: ""
   })
   const formik = useFormik({
     initialValues: {
@@ -65,30 +67,38 @@ const Page = () => {
       }
     }
   });
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      if (image === 9) {
+        setimage(1);
+      } else {
+        setimage(image + 1);
+      }
+    }, 3000);
+
+    return () => clearInterval(intervalo);
+  }, [image]);
 
   useEffect(() => {
     fetch('https://backendopra.onrender.com/opradesign/persona')
-        .then(response => {
-          return response.json();
-        })
-        .then(data => {
-          setData(data);
-          setLoadingData(true)
-        })
-        .catch(error => {
-          // Manejar el error
-          console.error('Error:', error);
-          setNotificationData({...notificationData,
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        setData(data);
+        setLoadingData(true)
+      })
+      .catch(error => {
+        // Manejar el error
+        console.error('Error:', error);
+        setNotificationData({
+          ...notificationData,
           error: true,
-          typeError:"error",
-          messageError:"Ocurrió un error al intentar conectarse con el servidor"
-          })
-        }); 
-
-        // setTimeout(() => {
-        //   // setLoadingData(true)
-        // }, 3000);
-}, []);
+          typeError: "error",
+          messageError: "Ocurrió un error al intentar conectarse con el servidor"
+        })
+      });
+  }, []);
 
   const handleMethodChange = useCallback(
     (event, value) => {
@@ -105,50 +115,52 @@ const Page = () => {
     [auth, router]
   );
 
+
   return (
     <>
-    {loadingData?
-    <Box
-    sx={{
-      display: 'flex',
-      height: '100vh'
-    }}>
-        <Head>
-          <title>
-            Iniciar sesion | Opra Design
-          </title>
-        </Head>
+      {loadingData ?
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent:'center',
-            padding: '0 5% ',
-            width: '50%',
-            // backgroundColor: 'red'
-
-          }}
-        >
+            height: '100vh',
+          }}>
+          <Head>
+            <title>
+              Iniciar sesion | Opra Design
+            </title>
+          </Head>
           <Box
-          sx={{
-            // backgroundColor: 'red',
-            padding: '5%',
-            borderRadius: '10px',
-          }}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              padding: '0 5% ',
+              width: '50%',
+              height: '100vh',
+              // backgroundColor: 'red'
+
+            }}
           >
-          <Stack
-              spacing={4}
-              sx={{mb: 5}}
+            <Box
+              sx={{
+                // backgroundColor: 'red',
+                padding: '5%',
+                borderRadius: '10px',
+              }}
             >
-              <Typography variant="h4">
-                Iniciar sesión
-              </Typography>
-              <Typography
-                color="text.secondary"
-                variant="body2"
+              <Stack
+                spacing={4}
+                sx={{ mb: 5 }}
               >
-              </Typography>
-            </Stack>
+                <Typography variant="h4">
+                  Iniciar sesión
+                </Typography>
+                <Typography
+                  color="text.secondary"
+                  variant="body2"
+                >
+                </Typography>
+              </Stack>
               <form
                 noValidate
                 onSubmit={formik.handleSubmit}
@@ -189,54 +201,45 @@ const Page = () => {
                     {formik.errors.submit}
                   </Typography>
                 )}
-                 <LoadingButton
-                    loading={loading}
-                    fullWidth
-                    size="large"
-                    sx={{ mt: 3 }}
-                    type="submit"
-                    variant="contained"
-                  >
-                    <span>Iniciar sesión</span>
-                  </LoadingButton>
+                <LoadingButton
+                  loading={loading}
+                  fullWidth
+                  size="large"
+                  sx={{ mt: 3 }}
+                  type="submit"
+                  variant="contained"
+                >
+                  <span>Iniciar sesión</span>
+                </LoadingButton>
               </form>
-           
+
+            </Box>
+            {/* <AlertMessage
+                open = {notificationData?.error}
+                setOpen = {setOpenError}
+                type = {notificationData?.typeError}
+                message={notificationData?.messageError}
+                /> */}
           </Box>
-          <AlertMessage
-            open = {notificationData?.error}
-            setOpen = {setOpenError}
-            type = {notificationData?.typeError}
-            message={notificationData?.messageError}
-            />
+
+          <img
+            className='ImageCarouselLoginPage'
+            alt="Saco"
+            src={`/assets/${image}.PNG`}
+          />
         </Box>
-          <Box sx={{ 
-            width: '50%',
-            height: '100%',
-            objectFit: 'cover' 
-            }}>
-            <img
-              alt="Saco"
-              src="/assets/saco3.PNG"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover' 
-              }}
-            />
-          </Box>
-    </Box>
-    :
-    <>
-    <MainLoading/>
-    <AlertMessage
-    open = {notificationData?.error}
-    setOpen = {setOpenError}
-    type = {notificationData?.typeError}
-    message={notificationData?.messageError}
-    />
+        :
+        <>
+          <MainLoading />
+          <AlertMessage
+            open={notificationData?.error}
+            setOpen={setOpenError}
+            type={notificationData?.typeError}
+            message={notificationData?.messageError}
+          />
+        </>
+      }
     </>
-    }
-    </> 
   );
 };
 
