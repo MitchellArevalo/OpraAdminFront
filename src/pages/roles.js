@@ -11,7 +11,7 @@ const Page = () => {
     <>
     <Head>
       <title>
-        Ventas | Opra Design
+        Roles | Opra Design
       </title>
     </Head>
     <Box
@@ -30,7 +30,7 @@ const Page = () => {
           >
             <Stack spacing={1}>
               <Typography variant="h4">
-                Ventas
+                Roles
               </Typography>
               <Stack
                 alignItems="center"

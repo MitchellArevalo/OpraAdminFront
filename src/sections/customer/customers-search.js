@@ -19,7 +19,7 @@ const CustomersSearch = (props) => {
     }
   };
 
-  const filteredData = data.filter((item) =>
+  const filteredData = data.length<1?'':data.filter((item) =>
     item.nombre.toLowerCase().includes(inputValue.toLowerCase())
   );
 

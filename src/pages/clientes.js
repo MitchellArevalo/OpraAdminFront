@@ -122,7 +122,9 @@ const Page = () => {
                   </Button>
                   <ExportToExcel 
                   data={data}
-                  mainComponent={'Clientes'}/>
+                  mainComponent={'Clientes'}
+                  allow ={data.length > 0?true:false}
+                  />
                 </Stack>
               </Stack>
               <div>

@@ -1,12 +1,11 @@
 import ChartBarIcon from '@heroicons/react/24/solid/ChartBarIcon';
-import CogIcon from '@heroicons/react/24/solid/CogIcon';
-import LockClosedIcon from '@heroicons/react/24/solid/LockClosedIcon';
 import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
 import UserIcon from '@heroicons/react/24/solid/UserIcon';
-import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
+import GroupIcon from '@mui/icons-material/Group';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import WarehouseIcon from '@mui/icons-material/Warehouse';
 import { SvgIcon } from '@mui/material';
 
 export const items = [
@@ -29,11 +28,20 @@ export const items = [
     )
   },
   {
+    title: 'Roles',
+    path:'/roles',
+    icon:(
+      <SvgIcon fontSize="small">
+        <GroupIcon />
+      </SvgIcon>
+    )
+  },
+  {
     title: 'Inventario',
     path: '/inventario',
     icon: (
       <SvgIcon fontSize="small">
-        <ShoppingBagIcon />
+        <InventoryIcon />
       </SvgIcon>
     )
   },
@@ -60,7 +68,7 @@ export const items = [
     path: '/entradasSalidas',
     icon: (
       <SvgIcon fontSize="small">
-        <InventoryIcon />
+        <WarehouseIcon />
       </SvgIcon>
     )
   }

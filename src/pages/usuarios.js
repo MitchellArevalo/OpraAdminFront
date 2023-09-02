@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Head from 'next/head';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, TextField, Typography, FormControl, InputAdornment, MenuItem, Divider } from '@mui/material';
+import { Box, Grow, Button, Popper, Container, Stack, SvgIcon, TextField, Typography, FormControl, InputAdornment, ClickAwayListener, Paper, MenuItem, Divider, MenuList } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
@@ -18,6 +18,8 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AlertMessage from 'src/components/alertMessage';
 import EmailIcon from '@mui/icons-material/Email';
 import ExportToExcel from 'src/components/exportToExcel';
+import IconButton from '@mui/material/IconButton';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 ////Estilos Desktop/////
 const styleModal = {
@@ -150,12 +152,15 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [openModalMenu, setOpenModalMenu] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [error, setOpenError] = useState(false);
   const [typeError, setTypeError] = useState("");
   const [messageError, setMessageError] = useState("");
   const [recharge, setRecharge] = useState(false);
-  const [busquedaFallida, setBusquedaFallida] = useState(false)
+  const [busquedaFallida, setBusquedaFallida] = useState(false);
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef(null);
 
   const [dataForm, setDataForm] = useState({
     name: "",
@@ -520,10 +525,41 @@ const Page = () => {
         setMessageError('Ocurrió un error: ' + error)
       });
   }
-  const usersWithOutImage = data.map(user => {
+  const usersWithOutImage = data.map == null?'':data.map(user => {
     const { contrasena, avatar, rol, ...rest } = user;
     return { ...rest, rol: rol.nombre };
   });
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      setOpenModalMenu(true)
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  function handleListKeyDown(event) {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      setOpen(false);
+    } else if (event.key === 'Escape') {
+      setOpen(false);
+    }
+  }
+
+  // return focus to the button when we transitioned from !open -> open
+  const prevOpen = useRef(open);
+  useEffect(() => {
+    if (prevOpen.current === true && open === false) {
+      anchorRef.current.focus();
+    }
+
+    prevOpen.current = open;
+  }, [open]);
 
   return (
     <>
@@ -568,7 +604,8 @@ const Page = () => {
                   <ExportToExcel 
                   data={usersWithOutImage}
                   mainComponent={'Usuarios'}/>
-                </Stack>
+                  
+                </Stack>  
               </Stack>
               <div>
                 <Button
@@ -701,7 +738,7 @@ const Page = () => {
                             }}
                           />
                         </Box>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: 3 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
 
                           <TextField
                             id="documento"
@@ -736,6 +773,7 @@ const Page = () => {
                             }}
                             sx={{ width: '49%' }}
                           />
+                            
 
                         </Box>
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: 3 }}>
