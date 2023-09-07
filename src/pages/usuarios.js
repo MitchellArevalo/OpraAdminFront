@@ -18,6 +18,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AlertMessage from 'src/components/alertMessage';
 import EmailIcon from '@mui/icons-material/Email';
 import ExportToExcel from 'src/components/exportToExcel';
+import HomeIcon from '@mui/icons-material/Home';
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
@@ -175,9 +176,11 @@ const Page = () => {
     errorUsername: false,
     errorPassword: false,
     errorEmail: false,
+    errorAddress: false,
     launchError: true,
     profileImage: "",
-    rol: ""
+    rol: "",
+    address: ""
   })
   const clearFields = () => {
     setDataForm({
@@ -194,9 +197,11 @@ const Page = () => {
       errorUsername: false,
       errorEmail: false,
       errorPassword: false,
+      errorAddress: false,
       launchError: true,
       profileImage: "",
-      rol: ""
+      rol: "",
+      address: ""
     })
     setOpenModal(false);
   }
@@ -238,7 +243,7 @@ const Page = () => {
   useEffect(() => {
 
     setLoadingUsers(false)
-    fetch('https://backendopra.onrender.com/opradesign/persona')
+    fetch('https://backendopra.onrender.com/opradesign/employee')
       .then(response => {
         return response.json();
       })
@@ -269,23 +274,13 @@ const Page = () => {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
-  function formatPhoneNumber(phoneNumber) {
-    const cleaned = ('' + phoneNumber).replace(/\D/g, '');
-    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-
-    if (match) {
-      return '(' + match[1] + ') ' + match[2] + '-' + match[3];
-    }
-
-    return null;
-  }
   function validarEmail(email) {
     const expresionRegular = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return expresionRegular.test(email);
   }
   const handleClick = () => {
 
-    if (dataForm?.launchError || dataForm?.errorDocumento || dataForm?.errorTelefono || dataForm?.errorNombre || dataForm?.errorUsername || dataForm?.errorPassword) {
+    if (dataForm?.launchError || dataForm?.errorDocumento || dataForm?.errorTelefono || dataForm?.errorNombre || dataForm?.errorUsername || dataForm?.errorPassword || dataForm?.errorAddress) {
       setOpenError(true);
       setTypeError('error');
       setMessageError('Complete los campos obligatorios o realice las correcciones necesarias')
@@ -402,7 +397,15 @@ const Page = () => {
           })
         }
         break;
-
+      case 'address':
+        if (event.target.value.length < 1){
+          setDataForm({
+            ...dataForm,
+            launchError: true,
+            errorAddress: true
+          })
+        }
+        break
       default:
         break;
     }
@@ -466,7 +469,15 @@ const Page = () => {
           errorEmail: false
         })
         break;
-      default:
+        case 'address':
+          // console.log('valor name: ' + event.target.value);
+          setDataForm({
+            ...dataForm,
+            address: event.target.value,
+            errorAddress: false
+          })
+          break;
+        default:
         break;
     }
   }
@@ -482,9 +493,10 @@ const Page = () => {
       "username": dataForm?.username,
       "contrasena": dataForm?.password,
       "documento": dataForm?.documento,
-      "nombre": dataForm?.name,
+      "name": dataForm?.name,
       "email": dataForm?.email,
       "numeroTelefonico": dataForm?.telefono,
+      "direccion": dataForm?.address,
       "idRol": Number(dataForm?.rol)
     });
 
@@ -496,7 +508,7 @@ const Page = () => {
     };
 
     let statusCode = 0;
-    fetch("https://backendopra.onrender.com/opradesign/persona", requestOptions)
+    fetch("https://backendopra.onrender.com/opradesign/employee/", requestOptions)
       .then(response => {
         // console.log(response.status)
         statusCode = response.status;
@@ -541,15 +553,6 @@ const Page = () => {
 
     setOpen(false);
   };
-
-  function handleListKeyDown(event) {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      setOpen(false);
-    } else if (event.key === 'Escape') {
-      setOpen(false);
-    }
-  }
 
   // return focus to the button when we transitioned from !open -> open
   const prevOpen = useRef(open);
@@ -839,6 +842,26 @@ const Page = () => {
                             }}
                           />
                         </Box>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: 3 }}>
+
+                          <TextField
+                            id="address"
+                            error={dataForm?.errorAddress}
+                            label="Dirección*"
+                            value={dataForm?.address}
+                            onChange={validationFields}
+                            onBlur={errorFieldsValidation}
+                            type="email"
+                            helperText={dataForm?.errorAddress ? "Campo obligatorio" : ''}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            sx={{ width: '100%' }}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start"><HomeIcon /></InputAdornment>,
+                            }}
+                          />
+                        </Box>
 
                       </Box>
 
@@ -914,6 +937,12 @@ const Page = () => {
               <CustomersTable
                 data={filteredDataUsers.length > 0 ? filteredDataUsers : data}
                 busquedaFallida={busquedaFallida}
+                setRecharge = {setRecharge}
+                recharge = {recharge}
+                setLoading = {setLoading}
+                setOpenError = {setOpenError}
+                setTypeError = {setTypeError}
+                setMessageError = {setMessageError}
               /> :
               <Box
                 sx={{

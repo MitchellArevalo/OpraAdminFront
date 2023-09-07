@@ -18,30 +18,19 @@ export const AccountProfileDetails = (props) => {
 
   const initialValues = {
     username: user == null?'':user.username,
-    documento: user == null?'':user.documento,
-    nombre: user == null?'':user.nombre,
+    document: user == null?'':user.document,
+    name: user == null?'':user.name,
     email: user == null?'':user.email,
-    numeroTelefonico: user == null?'':user.numeroTelefonico,
+    phoneNumber: user == null?'':user.phoneNumber,
   }
 
   const [values, setValues] = useState({
     username: initialValues.username,
-    documento: initialValues.documento,
-    nombre: initialValues.nombre,
+    document: initialValues.document,
+    name: initialValues.name,
     email: initialValues.email,
-    numeroTelefonico: initialValues.numeroTelefonico,
+    phoneNumber: initialValues.phoneNumber,
   });
-
-  function formatPhoneNumber(phoneNumber) {
-    const cleaned = ('' + phoneNumber).replace(/\D/g, '');
-    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-  
-    if (match) {
-      return '(' + match[1] + ') ' + match[2] + '-' + match[3];
-    }
-  
-    return null;
-  }
 
   const handleChange = useCallback((event) => {
    
@@ -80,27 +69,27 @@ export const AccountProfileDetails = (props) => {
            }}>
               <TextField
                 fullWidth
-                label="Nombre completo*"
-                name="nombre"
+                label="Nombre completo"
+                name="name"
                 onChange={handleChange}
                 required
-                value={values?.nombre}
+                value={values?.name}
                 sx={testFieldCss}
               />
 
               <TextField
                 fullWidth
                 label="Documento*"
-                name="documento"
+                name="document"
                 onChange={handleChange}
                 required
-                value={values?.documento}
+                value={values?.document}
                 sx={testFieldCss}
               />
             
               <TextField
                 fullWidth
-                label="Nombre de usuario*"
+                label="Username"
                 name="username"
                 onChange={handleChange}
                 required
@@ -121,11 +110,12 @@ export const AccountProfileDetails = (props) => {
               <TextField
                 fullWidth
                 label="Número teléfonico"
-                name="numeroTelefonico"
+                name="phoneNumber"
                 onChange={handleChange}
+                required
                 type="number"
                 inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                value={values?.numeroTelefonico}
+                value={values?.phoneNumber}
                 sx={testFieldCss}
               />
           </Box>

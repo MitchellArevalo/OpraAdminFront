@@ -72,7 +72,7 @@ export const SideNav = (props) => {
                 color="inherit"
                 variant="subtitle1"
               >
-                {auth.user == null?'':auth.user.nombre}
+                {auth.user == null?'':auth.user.name}
               </Typography>
               <Typography
                 color="neutral.400"

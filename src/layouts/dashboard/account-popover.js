@@ -71,7 +71,7 @@ export const AccountPopover = (props) => {
           sx={{
           }}
         >
-          {auth.user == null?'':auth.user.nombre}
+          {auth.user == null?'':auth.user.name}
         </Typography>
         <Typography
           color="text.primary"

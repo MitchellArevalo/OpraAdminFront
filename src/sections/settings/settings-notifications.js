@@ -1,9 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import {
   Button,
   Card,
   CardActions,
-  CardContent,
+  Box,
   CardHeader,
   Checkbox,
   Divider,
@@ -13,7 +13,16 @@ import {
   Unstable_Grid2 as Grid
 } from '@mui/material';
 
-export const SettingsNotifications = () => {
+export const SettingsNotifications = (props) => {
+
+  const { notification, user } = props;
+  const [checked, setChecked] = useState(notification);
+
+  const handleChange = (event) => {
+    console.log(user)
+    setChecked(event.target.checked);
+  };
+
   const handleSubmit = useCallback(
     (event) => {
       event.preventDefault();
@@ -29,38 +38,22 @@ export const SettingsNotifications = () => {
           title="Notificaciones"
         />
         <Divider />
-        <CardContent>
-          <Grid
-            container
-            spacing={6}
-            wrap="wrap"
-          >
-            <Grid
-              xs={12}
-              sm={6}
-              md={4}
-            >
-              <Stack spacing={1}>
-                <Typography variant="h6">
-                  Medio
-                </Typography>
-                <Stack>
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked />}
-                    label="Correo eléctronico"
-                  />
-                </Stack>
-              </Stack>
-            </Grid>
-            <Grid
-              item
-              md={4}
-              sm={6}
-              xs={12}
-            >
-            </Grid>
-          </Grid>
-        </CardContent>
+        <Box
+        sx={{
+          width: '100%',
+          padding: '2%',
+        }}>
+        <Typography variant="h6">
+          Medio
+        </Typography>
+        <Typography variant="subtitle1">
+          <Checkbox
+            checked={checked}
+            onChange={handleChange}
+          />
+          Correo electrónico
+        </Typography>
+        </Box>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
           <Button variant="contained">

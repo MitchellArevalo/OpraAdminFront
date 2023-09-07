@@ -18,7 +18,7 @@ export const AccountProfile = (props) => (
           alignItems: 'top',
           justifyContent: 'center',
           display: 'flex',
-          height: '40vh',
+          height: '25vh',
           // backgroundColor: 'blue'
           // flexDirection: 'column'
         }}
@@ -53,7 +53,7 @@ export const AccountProfile = (props) => (
           gutterBottom
           variant="h5"
         >
-          {props.user == null?'':props.user.nombre}
+          {props.user == null?'':props.user.name}
         </Typography>
         <Typography
           color="text.secondary"

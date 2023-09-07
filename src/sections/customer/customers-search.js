@@ -20,7 +20,7 @@ const CustomersSearch = (props) => {
   };
 
   const filteredData = data.length<1?'':data.filter((item) =>
-    item.nombre.toLowerCase().includes(inputValue.toLowerCase())
+    item.name.toLowerCase().includes(inputValue.toLowerCase())
   );
 
   useEffect(() => {

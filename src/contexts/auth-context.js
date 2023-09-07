@@ -88,18 +88,19 @@ export const AuthProvider = (props) => {
       // console.log(userData.contrasena);
 
       const user = {
-        idPersona: userData.idPersona,
-        avatar: userData.avatar,
-        username: userData.username,
-        contrasena: userData.contrasena,
-        documento: userData.documento,
-        nombre: userData.nombre,
-        email: userData.email,
-        numeroTelefonico: userData.numeroTelefonico,
-        rol: {
+        idEmployee: userData.idEmployee,
+          avatar: userData.avatar,
+          username: userData.username,
+          password: userData.password,
+          document: userData.document,
+          name: userData.name,
+          email: userData.email,
+          phoneNumber: userData.phoneNumber,
+          notificationsEmail: userData.notificationsEmail,
+          rol: {
             idRol: userData.rol.idRol,
             nombre: userData.rol.nombre
-        }
+          }
       };
 
       dispatch({
@@ -129,7 +130,7 @@ export const AuthProvider = (props) => {
     if(filteredData.length < 1){
       throw new Error('Verifique su correo y contraseña por favor');
     }
-    if (password !== filteredData[0].contrasena || email !== filteredData[0].email ) {
+    if (password !== filteredData[0].password || email !== filteredData[0].email ) {
       throw new Error('Verifique su correo y contraseña por favor');
     }
     // if (password !== filteredData[0].contrasena ) {
@@ -148,14 +149,15 @@ export const AuthProvider = (props) => {
     }
 
     const user = {
-      idPersona: filteredData[0].idPersona,
+      idEmployee: filteredData[0].idEmployee,
       avatar: filteredData[0].avatar,
       username: filteredData[0].username,
-      contrasena: filteredData[0].contrasena,
-      documento: filteredData[0].documento,
-      nombre: filteredData[0].nombre,
+      password: filteredData[0].password,
+      document: filteredData[0].document,
+      name: filteredData[0].name,
       email: filteredData[0].email,
-      numeroTelefonico: filteredData[0].numeroTelefonico,
+      phoneNumber: filteredData[0].phoneNumber,
+      notificationsEmail: filteredData[0].notificationsEmail,
       rol: {
         idRol: filteredData[0].rol.idRol,
         nombre: filteredData[0].rol.nombre

@@ -45,7 +45,7 @@ import { useAuth } from 'src/hooks/use-auth';
                   <Box
                   sx={{
                     // backgroundColor: 'red',
-                    height: '130vh',
+                    height: '90vh',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between'
@@ -61,7 +61,9 @@ import { useAuth } from 'src/hooks/use-auth';
               </Container>
             </Box>
             <SettingsPassword />
-            <SettingsNotifications />
+            <SettingsNotifications 
+            notification = {auth.user.notificationsEmail}
+            user={auth.user}/>
           </Stack>
         </Container>
       </Box>

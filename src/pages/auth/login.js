@@ -80,7 +80,7 @@ const Page = () => {
   }, [image]);
 
   useEffect(() => {
-    fetch('https://backendopra.onrender.com/opradesign/persona')
+    fetch('https://backendopra.onrender.com/opradesign/employee')
       .then(response => {
         return response.json();
       })
