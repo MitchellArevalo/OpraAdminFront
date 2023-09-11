@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -13,6 +13,7 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { indigo, error } from "src/theme/colors";
 import { Box, Typography } from "@mui/material";
 import ModalUtility from "src/components/modalUtility";
+import { ApiContext } from 'src/contexts/Api-context';
 
 function formatPhoneNumber(phoneNumber) {
   const cleaned = ("" + phoneNumber).replace(/\D/g, "");
@@ -67,6 +68,8 @@ export default function CustomersTable(props) {
   
   const { setLoading, setOpenError, setTypeError, setMessageError, setRecharge, recharge } = props;
 
+  const endpoint = useContext(ApiContext);
+
   function handleEditClick(user){
     console.log(user);
   }
@@ -78,7 +81,7 @@ export default function CustomersTable(props) {
       redirect: 'follow'
     };
 
-    fetch('https://backendopra.onrender.com/opradesign/employee/' + id, requestOptions)
+    fetch(endpoint + '/opradesign/employee/' + id, requestOptions)
     .then(response => {
       statusCode= response.status;
     })
@@ -149,7 +152,7 @@ export default function CustomersTable(props) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {props.data.map((data) => (
+              {props.data.length > 0 ? props.data.map((data) => (
                 <TableRow key={data.idEmployee} align={"center"}>
                   <TableCell
                     sx={{
@@ -222,7 +225,7 @@ export default function CustomersTable(props) {
                     </IconButton>
                   </TableCell>
                 </TableRow>
-              ))}
+              )): ''}
             </TableBody>
           </Table>
         </TableContainer>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect} from 'react';
 import Head from "next/head";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 import {
@@ -17,18 +17,28 @@ import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
 import ExportToExcel from "src/components/exportToExcel";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import RolesTable from "src/sections/Roles/rolesTable";
+import { styled } from '@mui/material/styles';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import ModulePermission from 'src/components/ModulePermission';
 
 const Page = () => {
     const [rolSelected, setRolSelected] = useState('');
-    const [spreadRoles, setSpreadRoles] = useState({
-        nombre: rolSelected,
-        Modulo: {
-          view: false,
-          create: false,
-          edit: false,
-          del: false
+    const [ridRolSelected, setIdRolSelected] = useState('');
+    // const [modulosRol, setModulosRol] = useState();
+    const [spreadRoles, setSpreadRoles] = useState(
+       {
+          nombre: rolSelected,
+          Modulo: {
+            view: false,
+            create: false,
+            edit: false,
+            del: false
         }
-      });
+      }
+      );
+      
     //   const nuevoSpreadRoles = {
     //     ...spreadRoles,
     //     Modulo: {
@@ -41,9 +51,128 @@ const Page = () => {
     //   };
       
     //   setSpreadRoles(nuevoSpreadRoles);
-
-    const rolClick = () =>{
-    }
+    const modulosRol = [
+            {
+                idModulo: 1,
+                modulo: {
+                    idModulo: 1,
+                    name: "Usuarios",
+                    edit: true,
+                    view: true,
+                    create: true,
+                    delete: true
+                },
+                rol: {
+                    idRol: 1,
+                    nombre: "Administrador"
+                }
+            },
+            {
+                idModulo: 2,
+                modulo: {
+                    idModulo: 2,
+                    name: "Roles",
+                    edit: true,
+                    view: true,
+                    create: true,
+                    delete: true
+                },
+                rol: {
+                    idRol: 1,
+                    nombre: "Administrador"
+                }
+            },
+            {
+                idModulo: 3,
+                modulo: {
+                    idModulo: 3,
+                    name: "Inventario",
+                    edit: true,
+                    view: true,
+                    create: true,
+                    delete: true
+                },
+                rol: {
+                    idRol: 1,
+                    nombre: "Administrador"
+                }
+            },
+            {
+                idModulo: 4,
+                modulo: {
+                    idModulo: 4,
+                    name: "Clientes",
+                    edit: true,
+                    view: true,
+                    create: true,
+                    delete: true
+                },
+                rol: {
+                    idRol: 1,
+                    nombre: "Administrador"
+                }
+            },
+            {
+                idModulo: 5,
+                modulo: {
+                    idModulo: 5,
+                    name: "Ventas",
+                    edit: true,
+                    view: true,
+                    create: true,
+                    delete: true
+                },
+                rol: {
+                    idRol: 1,
+                    nombre: "Administrador"
+                }
+            },
+            {
+                idModulo: 6,
+                modulo: {
+                    idModulo: 6,
+                    name: "Entradas/Salidas",
+                    edit: true,
+                    view: true,
+                    create: true,
+                    delete: true
+                },
+                rol: {
+                    idRol: 1,
+                    nombre: "Administrador"
+                }
+            },
+            {
+                idModulo: 7,
+                modulo: {
+                    idModulo: 7,
+                    name: "Dashboard",
+                    edit: true,
+                    view: true,
+                    create: true,
+                    delete: true
+                },
+                rol: {
+                    idRol: 1,
+                    nombre: "Administrador"
+                }
+            }
+    ]
+    const data = [
+      {
+        id: 1,
+        nombre:"Administrador",
+      },
+      {
+        id: 2,
+        nombre:"Gerente",
+      },
+      {
+        id: 3,
+        nombre:"Vendedor",
+      }
+    ]
+    
   return (
     <>
       <Head>
@@ -97,19 +226,22 @@ const Page = () => {
             </Stack>
             <Box
             sx={{
-                backgroundColor: 'blue',
+                // backgroundColor: 'blue',
                 display: 'flex',
                 justifyContent: 'space-around',
-                width: '100% '
+                width: '100% ',
+                height: '60vh',
             }}
             >
                  <Box
                  sx={{
-                    backgroundColor: 'red',
-                    width: '30%'
+                    // backgroundColor: 'red',
+                    width: '30%',
+                    height: '100%'
                  }}>
                   <RolesTable
                   setRolSelected = {setRolSelected}
+                  data = {data}
                    />
                 </Box>
                 <Divider 
@@ -117,10 +249,43 @@ const Page = () => {
                 flexItem />
                 <Box
                 sx={{
-                    backgroundColor: 'green',
-                    width: '70%'
+                    // backgroundColor: 'green',
+                    height:'55vh',
+                    maxHeight: '55vh',
+                    overflow: 'auto',
+                    width: '70%',
+                    padding: ' 0% 10%'
                 }}>
-                  {rolSelected}
+                  <Typography variant="h5"
+                  sx={{
+                    margin: '10px'
+                  }}>
+                    {rolSelected}
+                </Typography>
+                <Typography
+                sx={{
+                  // margin: '10px'
+                }}>
+                  {rolSelected === ''? '':'Por favor seleccione los permisos que va a tener el rol'}
+                </Typography>
+                {rolSelected === ''? '':
+                <>
+                 <FormGroup
+                sx={{
+                  // // display: 'flex',
+                  // backgroundColor: 'gray',
+                  // // flexDirection: 'row',
+                  // margin: '3% 0 0 0'
+                }}>
+                  {/* {modulosRol.map((item, index) => (
+                    <div key={index}> */}
+                      <ModulePermission item={modulosRol} />
+                    {/* </div>
+                    
+                  ))} */}
+                </FormGroup>
+                </>
+                }                
                 </Box>
             </Box>
             <Box

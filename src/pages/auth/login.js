@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useContext } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -22,6 +22,7 @@ import { CCarousel, CCarouselItem, CImage } from '@coreui/react'
 import LoadingButton from '@mui/lab/LoadingButton';
 import MainLoading from 'src/components/mainLoading'
 import AlertMessage from 'src/components/alertMessage';
+import { ApiContext } from 'src/contexts/Api-context';
 
 const Page = () => {
   const router = useRouter();
@@ -32,6 +33,8 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [error, setOpenError] = useState(false);
   const [image, setimage] = useState(1);
+  const endpoint = useContext(ApiContext);
+
   const [notificationData, setNotificationData] = useState({
     error: error,
     typeError: "",
@@ -80,7 +83,7 @@ const Page = () => {
   }, [image]);
 
   useEffect(() => {
-    fetch('https://backendopra.onrender.com/opradesign/employee')
+    fetch(endpoint + '/opradesign/employee')
       .then(response => {
         return response.json();
       })

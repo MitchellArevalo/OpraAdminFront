@@ -19,9 +19,9 @@ const CustomersSearch = (props) => {
     }
   };
 
-  const filteredData = data.length<1?'':data.filter((item) =>
-    item.name.toLowerCase().includes(inputValue.toLowerCase())
-  );
+  const filteredData = data.length > 0?data.filter((item) =>
+  item.name.toLowerCase().includes(inputValue.toLowerCase())
+):'';
 
   useEffect(() => {
     // console.log(filteredData);

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import Head from 'next/head';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
@@ -21,6 +21,7 @@ import ExportToExcel from 'src/components/exportToExcel';
 import HomeIcon from '@mui/icons-material/Home';
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { ApiContext } from 'src/contexts/Api-context';
 
 ////Estilos Desktop/////
 const styleModal = {
@@ -162,6 +163,7 @@ const Page = () => {
   const [busquedaFallida, setBusquedaFallida] = useState(false);
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
+  const endpoint = useContext(ApiContext);
 
   const [dataForm, setDataForm] = useState({
     name: "",
@@ -207,7 +209,7 @@ const Page = () => {
   }
   useEffect(() => {
     let statusCode = 0;
-    fetch('https://backendopra.onrender.com/opradesign/rol')
+    fetch(endpoint + '/opradesign/rol')
       .then(response => {
         statusCode = response.status;
         return response.json();
@@ -227,7 +229,7 @@ const Page = () => {
         console.error('Error:', error);
         setOpenError(true);
         setTypeError('error');
-        setMessageError('Ocurrió un error al conectarse con la base de datos de los roles y generó la siguiente excepción: ' + result.nombreExcepcion + ': ' + result.mensaje);
+        setMessageError('Ocurrió un error al conectarse con la base de datos de los roles y generó la siguiente excepción: ' + error.nombreExcepcion + ': ' + error.mensaje);
       });
     const handleWindowResize = () => {
       setScreenWidth(window.innerWidth);
@@ -243,7 +245,7 @@ const Page = () => {
   useEffect(() => {
 
     setLoadingUsers(false)
-    fetch('https://backendopra.onrender.com/opradesign/employee')
+    fetch(endpoint + '/opradesign/employee')
       .then(response => {
         return response.json();
       })
@@ -508,7 +510,7 @@ const Page = () => {
     };
 
     let statusCode = 0;
-    fetch("https://backendopra.onrender.com/opradesign/employee/", requestOptions)
+    fetch(endpoint + "/opradesign/employee/", requestOptions)
       .then(response => {
         // console.log(response.status)
         statusCode = response.status;

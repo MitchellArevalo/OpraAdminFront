@@ -1,4 +1,5 @@
 import NextLink from 'next/link';
+import { useState, useContext, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import PropTypes from 'prop-types';
 import ArrowTopRightOnSquareIcon from '@heroicons/react/24/solid/ArrowTopRightOnSquareIcon';
@@ -18,13 +19,95 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { items } from './config';
 import { SideNavItem } from './side-nav-item';
 import { useAuth } from 'src/hooks/use-auth';
+import { ApiContext } from 'src/contexts/Api-context';
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const auth = useAuth();
+  const endpoint = useContext(ApiContext);
 
+  const roles = 
+  [
+    {
+        idModulo: 1,
+        modulo: {
+            idModulo: 1,
+            name: "Usuarios",
+            edit: true,
+            view: true,
+            create: true,
+            "delete": true
+        }
+    },
+    {
+        idModulo: 6,
+        modulo: {
+            idModulo: 1,
+            name: "Roles",
+            edit: true,
+            view: true,
+            create: true,
+            delete: true
+        }
+    },
+    {
+        idModulo: 6,
+        modulo: {
+            idModulo: 1,
+            name: "Inventario",
+            edit: true,
+            view: true,
+            create: true,
+            delete: true
+        }
+    },
+    {
+        idModulo: 6,
+        modulo: {
+            idModulo: 1,
+            name: "Clientes",
+            edit: true,
+            view: true,
+            create: true,
+            delete: true
+        }
+    },
+    {
+        idModulo: 6,
+        modulo: {
+            idModulo: 1,
+            name: "Ventas",
+            edit: true,
+            view: true,
+            create: true,
+            delete: true
+        }
+    },
+    {
+        idModulo: 6,
+        modulo: {
+            idModulo: 1,
+            name: "Entradas / salidas",
+            edit: true,
+            view: true,
+            create: true,
+            delete: true
+        }
+    },
+    {
+        idModulo: 6,
+        modulo: {
+            idModulo: 1,
+            name: "Dashboards",
+            edit: true,
+            view: true,
+            create: true,
+            delete: true
+        }
+    }
+]
   const content = (
     <Scrollbar
       sx={{
