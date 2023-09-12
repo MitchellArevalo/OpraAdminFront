@@ -23,91 +23,57 @@ import { ApiContext } from 'src/contexts/Api-context';
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
+  const [ moduleData, setModuleData ] = useState([]);
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const auth = useAuth();
   const endpoint = useContext(ApiContext);
 
-  const roles = 
-  [
-    {
-        idModulo: 1,
-        modulo: {
-            idModulo: 1,
-            name: "Usuarios",
-            edit: true,
-            view: true,
-            create: true,
-            "delete": true
+  useEffect(() => {
+    let statusCode = 0;
+    fetch( endpoint + '/opradesign/modulosrol/rol/' + auth.user.rol.idRol)
+      .then(response => {
+        statusCode = response.status;
+        return response.json();
+      })
+      .then(data => {
+        if (statusCode === 200) {
+          setModuleData(data);
+          const modulesStorage = data.map(objeto => {
+            return {
+              name: objeto.name,
+              edit: objeto.edit,
+              view: objeto.view,
+              create: objeto.create,
+              delete: objeto.delete
+            };
+          });
+          console.log('modulos para el local storage: ' ,modulesStorage);
+          localStorage.setItem('permissionSet', JSON.stringify(modulesStorage));
+          
+        } else {
+          console.log('El estatus code es diferente a 200: StatusCode: ' + statusCode);
         }
-    },
-    {
-        idModulo: 6,
-        modulo: {
-            idModulo: 1,
-            name: "Roles",
-            edit: true,
-            view: true,
-            create: true,
-            delete: true
-        }
-    },
-    {
-        idModulo: 6,
-        modulo: {
-            idModulo: 1,
-            name: "Inventario",
-            edit: true,
-            view: true,
-            create: true,
-            delete: true
-        }
-    },
-    {
-        idModulo: 6,
-        modulo: {
-            idModulo: 1,
-            name: "Clientes",
-            edit: true,
-            view: true,
-            create: true,
-            delete: true
-        }
-    },
-    {
-        idModulo: 6,
-        modulo: {
-            idModulo: 1,
-            name: "Ventas",
-            edit: true,
-            view: true,
-            create: true,
-            delete: true
-        }
-    },
-    {
-        idModulo: 6,
-        modulo: {
-            idModulo: 1,
-            name: "Entradas / salidas",
-            edit: true,
-            view: true,
-            create: true,
-            delete: true
-        }
-    },
-    {
-        idModulo: 6,
-        modulo: {
-            idModulo: 1,
-            name: "Dashboards",
-            edit: true,
-            view: true,
-            create: true,
-            delete: true
-        }
-    }
-]
+      })
+      .catch(error => {
+        // Manejar el error
+        console.error('Error:', error);
+        // setOpenError(true);
+        // setTypeError('error');
+        // setMessageError('Ocurrió un error al conectarse con la base de datos de los roles y generó la siguiente excepción: ' + error.nombreExcepcion + ': ' + error.mensaje);
+      });      
+  }, [])
+  
+  function ShowModule(moduleName) {
+    let modulo = moduleData.filter(modulo => modulo.name === moduleName);
+    let show = false;
+    modulo.map((item, index) => {
+      show = item.view;
+    });
+    
+    return show;
+  }
+
   const content = (
     <Scrollbar
       sx={{
@@ -191,18 +157,19 @@ export const SideNav = (props) => {
           >
             {items.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
-
-              return (
-                <SideNavItem
-                  active={active}
-                  disabled={item.disabled}
-                  external={item.external}
-                  icon={item.icon}
-                  key={item.title}
-                  path={item.path}
-                  title={item.title}
-                />
-              );
+              if(ShowModule(item.apiName)){
+                return (
+                  <SideNavItem
+                    active={active}
+                    disabled={item.disabled}
+                    external={item.external}
+                    icon={item.icon}
+                    key={item.title}
+                    path={item.path}
+                    title={item.title}
+                  />
+                );
+              }
             })}
           </Stack>
         </Box>

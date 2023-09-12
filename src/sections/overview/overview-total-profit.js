@@ -19,7 +19,7 @@ export const OverviewTotalProfit = (props) => {
               color="text.secondary"
               variant="overline"
             >
-              Ganancia neta
+              Ganancia neta mensual
             </Typography>
             <Typography variant="h4">
               {value}

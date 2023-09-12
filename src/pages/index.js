@@ -38,10 +38,10 @@ const Page = () => (
             lg={3}
           >
             <OverviewBudget
-              difference={12}
               positive
               sx={{ height: '100%' }}
-              value="$24k"
+              value="$200k"
+              difference={12}
             />
           </Grid>
           <Grid
@@ -63,7 +63,7 @@ const Page = () => (
           >
             <OverviewTasksProgress
               sx={{ height: '100%' }}
-              value={75}
+              value={45}
             />
           </Grid>
           <Grid
@@ -85,10 +85,6 @@ const Page = () => (
                 {
                   name: 'Este año',
                   data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20]
-                },
-                {
-                  name: 'Año pasado',
-                  data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13]
                 }
               ]}
               sx={{ height: '100%' }}

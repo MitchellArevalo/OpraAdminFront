@@ -4,11 +4,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import ListSubheader from '@mui/material/ListSubheader';
   
   export default function RolesTable(props) {
     
-    const {setRolSelected, data} = props;
+    const {setRolSelected, setIdRolSelected, data} = props;
     // const data = [
     //     {
     //         Nombre: "Administrador"
@@ -133,6 +134,10 @@ import ListSubheader from '@mui/material/ListSubheader';
     const handleClick = (event) =>{
         setRolSelected(event.target.innerText)
     }
+
+    function assignIdRol(id){
+      setIdRolSelected(id);
+    }
   
     return (
 
@@ -152,13 +157,21 @@ import ListSubheader from '@mui/material/ListSubheader';
         <li key={`section-${item}`}>
           <ul>
             
-              <ListItem key={index}>
+              <ListItem key={index}
+                onClick={()=>{assignIdRol(item.idRol)}}
+
+              >
                 <ListItemButton
                 id={item.Nombre}
-                onClick={handleClick}>
+                onClick={handleClick}
+                >
                     <ListItemIcon>
+                    <RadioButtonCheckedIcon
+                    color='primary'/>
                     </ListItemIcon>
-                    <ListItemText primary={item.nombre} />
+                    <ListItemText 
+                    id={item.id} 
+                    primary={item.nombre} />
                 </ListItemButton>
               </ListItem>
             

@@ -35,7 +35,7 @@ export const NotificationsPopover = (props) => {
   function handleReadedClick(idNotification){
     console.log(idNotification);
     console.log(readedNotification);
-    props.setNotificationQuantity(data.length-1);
+    props.setNotificationQuantity(data.length);
      const newArrayA = data.slice();
      const index = newArrayA.find((item) => item.id === idNotification);
      if (index !== -1) {
@@ -54,7 +54,7 @@ export const NotificationsPopover = (props) => {
       "message": index.message,
       "readed": true
     });
-    console.log('este es el Raw: ' + raw);
+    // console.log('este es el Raw: ' + raw);
 
     let requestOptions = {
       method: 'PUT',
@@ -101,10 +101,12 @@ export const NotificationsPopover = (props) => {
   //     clearInterval(interval);
   //   };
   // }, []);
+
+  /////////////////////////////////CONEXIÓN COMENTADA PARA QUE NO CONSUMA RECURSOS DE LA BASE DE DATOS Y DEL SERVICIO////////////////
   useEffect(() => {
 
     // setLoadingUsers(false)
-    fetch(endpoint + '/opradesign/notification/employee/' + auth.user.idEmployee)
+    fetch(endpoint + '/opradesign/notification/employee/' + auth.user === null?'':auth.user.idEmployee)
       .then(response => {
         return response.json();
       })
@@ -112,9 +114,9 @@ export const NotificationsPopover = (props) => {
         let datosFiltrados = data.filter(objeto => objeto.readed === false);
         setData(datosFiltrados);
         setreadedNotification(data.filter(objeto => objeto.readed === true));
-        props.setNotificationQuantity(datosFiltrados.length > 0 ? datosFiltrados.length-1: datosFiltrados.length);
-        console.log(data.length);
-        console.log(data);
+        props.setNotificationQuantity(datosFiltrados.length > 0 ? datosFiltrados.length: datosFiltrados.length);
+        // console.log(data.length);
+        // console.log(data);
         // filterInf();   
         // setLoadingUsers(true)
         // console.log(data);
@@ -128,7 +130,7 @@ export const NotificationsPopover = (props) => {
       });
 
       
-  }, []);
+  }, [readedNotification]);
   //readedNotification es la variable para poner para que se actualicen las notificaciones en tiempo real
 
   async function readAll(){

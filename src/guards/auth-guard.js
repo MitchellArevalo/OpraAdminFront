@@ -16,6 +16,8 @@ export const AuthGuard = (props) => {
 
   useEffect(
     () => {
+      const miArray = JSON.parse(localStorage.getItem('permissionSet'));
+      console.log(router.pathname);
       if (!router.isReady) {
         return;
       }
@@ -37,6 +39,8 @@ export const AuthGuard = (props) => {
           .catch(console.error);
       } else {
         setChecked(true);
+        const miArray = JSON.parse(localStorage.getItem('permissionSet'));
+        console.log('array desde el local storage: ',miArray);
       }
     },
     [router.isReady]

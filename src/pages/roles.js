@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect, useContext} from 'react';
 import Head from "next/head";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 import {
@@ -8,7 +8,6 @@ import {
   Stack,
   SvgIcon,
   Typography,
-  FormControl,
   InputAdornment,
   MenuItem,
   Divider,
@@ -22,156 +21,135 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import ModulePermission from 'src/components/ModulePermission';
+import { ApiContext } from 'src/contexts/Api-context';
 
 const Page = () => {
     const [rolSelected, setRolSelected] = useState('');
-    const [ridRolSelected, setIdRolSelected] = useState('');
-    // const [modulosRol, setModulosRol] = useState();
-    const [spreadRoles, setSpreadRoles] = useState(
-       {
-          nombre: rolSelected,
-          Modulo: {
-            view: false,
-            create: false,
-            edit: false,
-            del: false
+    const [idRolSelected, setIdRolSelected] = useState(0);
+    const [ loader, setLoader ] = useState(true);
+    const [ data, setData ] = useState([]);
+    const [ idModules, setIdModules ] = useState([]);
+    const endpoint = useContext(ApiContext);
+    const [checked, setChecked] = useState(
+      {
+          idModule: idRolSelected,
+          moduleName: rolSelected,
+
+          UsuariosCreate: false,
+          UsuariosEdit: false,
+          UsuariosView: false,
+          UsuariosDelete: false,
+
+          RolesCreate: false,
+          RolesEdit: false,
+          RolesView: false,
+          RolesDelete: false,
+
+          InventarioCreate: false,
+          InventarioEdit: false,
+          InventarioView: false,
+          InventarioDelete: false,
+          
+          ClientesCreate: false,
+          ClientesEdit: false,
+          ClientesView: false,
+          ClientesDelete: false,
+      
+          VentasCreate: false,
+          VentasEdit: false,
+          VentasView: false,
+          VentasDelete: false,
+      
+          Entradas_SalidasCreate: false,
+          Entradas_SalidasEdit: false,
+          Entradas_SalidasView: false,
+          Entradas_SalidasDelete: false,
+      
+          DashboardCreate: false,
+          DashboardEdit: false,
+          DashboardView: false,
+          DashboardDelete: false,
+      }
+  );
+    
+  
+
+  useEffect(() => {
+    let statusCode = 0;
+    console.log(idRolSelected);
+    console.log(endpoint + '/opradesign/modulosrol/rol/' + idRolSelected);
+    fetch( endpoint + '/opradesign/modulosrol/rol/' + idRolSelected)
+      .then(response => {
+        statusCode = response.status;
+        return response.json();
+      })
+      .then(data => {
+        if (statusCode === 200) {
+          data.forEach(module => {
+            console.log(module);
+            let campo = module.name;
+            setChecked((prevState) => ({
+              ...prevState,
+              [campo + 'Create'] : module.create,
+              [campo + 'Edit']: module.edit,
+              [campo + 'View']: module.view,
+              [campo + 'Delete']: module.delete,
+            }));               
+          });
+          const modulesfilter = data.map(objeto => {
+            return {
+              idModulo: objeto.idModulo,
+              name: objeto.name
+            };
+          });
+          
+          setIdModules(modulesfilter);
+          console.log(data);
+          console.log('ID DE LOS MODULOS');
+          console.log(idModules);
+          setLoader(false);
+          
+        } else {
+          setOpenError(true);
+          setTypeError('error');
+          setMessageError('Ocurrió un error inesperado con los roles, consulte con su administrador')
         }
-      }
-      );
-      
-    //   const nuevoSpreadRoles = {
-    //     ...spreadRoles,
-    //     Modulo: {
-    //       ...spreadRoles.Modulo,
-    //       view: true,
-    //       create: true,
-    //       edit: true,
-    //       del: true
-    //     }
-    //   };
-      
-    //   setSpreadRoles(nuevoSpreadRoles);
-    const modulosRol = [
-            {
-                idModulo: 1,
-                modulo: {
-                    idModulo: 1,
-                    name: "Usuarios",
-                    edit: true,
-                    view: true,
-                    create: true,
-                    delete: true
-                },
-                rol: {
-                    idRol: 1,
-                    nombre: "Administrador"
-                }
-            },
-            {
-                idModulo: 2,
-                modulo: {
-                    idModulo: 2,
-                    name: "Roles",
-                    edit: true,
-                    view: true,
-                    create: true,
-                    delete: true
-                },
-                rol: {
-                    idRol: 1,
-                    nombre: "Administrador"
-                }
-            },
-            {
-                idModulo: 3,
-                modulo: {
-                    idModulo: 3,
-                    name: "Inventario",
-                    edit: true,
-                    view: true,
-                    create: true,
-                    delete: true
-                },
-                rol: {
-                    idRol: 1,
-                    nombre: "Administrador"
-                }
-            },
-            {
-                idModulo: 4,
-                modulo: {
-                    idModulo: 4,
-                    name: "Clientes",
-                    edit: true,
-                    view: true,
-                    create: true,
-                    delete: true
-                },
-                rol: {
-                    idRol: 1,
-                    nombre: "Administrador"
-                }
-            },
-            {
-                idModulo: 5,
-                modulo: {
-                    idModulo: 5,
-                    name: "Ventas",
-                    edit: true,
-                    view: true,
-                    create: true,
-                    delete: true
-                },
-                rol: {
-                    idRol: 1,
-                    nombre: "Administrador"
-                }
-            },
-            {
-                idModulo: 6,
-                modulo: {
-                    idModulo: 6,
-                    name: "Entradas/Salidas",
-                    edit: true,
-                    view: true,
-                    create: true,
-                    delete: true
-                },
-                rol: {
-                    idRol: 1,
-                    nombre: "Administrador"
-                }
-            },
-            {
-                idModulo: 7,
-                modulo: {
-                    idModulo: 7,
-                    name: "Dashboard",
-                    edit: true,
-                    view: true,
-                    create: true,
-                    delete: true
-                },
-                rol: {
-                    idRol: 1,
-                    nombre: "Administrador"
-                }
-            }
-    ]
-    const data = [
-      {
-        id: 1,
-        nombre:"Administrador",
-      },
-      {
-        id: 2,
-        nombre:"Gerente",
-      },
-      {
-        id: 3,
-        nombre:"Vendedor",
-      }
-    ]
+      })
+      .catch(error => {
+        // Manejar el error
+        console.error('Error:', error);
+        // setOpenError(true);
+        // setTypeError('error');
+        // setMessageError('Ocurrió un error al conectarse con la base de datos de los roles y generó la siguiente excepción: ' + error.nombreExcepcion + ': ' + error.mensaje);
+      });      
+  }, [idRolSelected])
+  //idRolSelected
+
+  useEffect(() => {
+    let statusCode = 0;
+    fetch(endpoint + '/opradesign/rol')
+      .then(response => {
+        statusCode = response.status;
+        return response.json();
+      })
+      .then(data => {
+        if (statusCode === 200) {
+          setData(data);
+          // console.log(data);
+        } else {
+          // setOpenError(true);
+          // setTypeError('error');
+          // setMessageError('Ocurrió un error inesperado con los roles, consulte con su administrador')
+        }
+      })
+      .catch(error => {
+        // Manejar el error
+        console.error('Error:', error);
+        // setOpenError(true);
+        // setTypeError('error');
+        // setMessageError('Ocurrió un error al conectarse con la base de datos de los roles y generó la siguiente excepción: ' + error.nombreExcepcion + ': ' + error.mensaje);
+      });
+  }, [])
     
   return (
     <>
@@ -193,22 +171,9 @@ const Page = () => {
              spacing={4}>
               <Stack spacing={1}>
                 <Typography variant="h4">Roles</Typography>
-                <Stack alignItems="center" direction="row" spacing={1}>
-                  <Button
-                    color="inherit"
-                    startIcon={
-                      <SvgIcon fontSize="small">
-                        <ArrowUpOnSquareIcon />
-                      </SvgIcon>
-                    }
-                  >
-                    Importar
-                  </Button>
-                  <ExportToExcel
-                  // data={data}
-                  // mainComponent={'Clientes'}
-                  // allow ={data.length > 0?true:false}
-                  />
+                <Stack alignItems="center"
+                 direction="row" 
+                 spacing={1}>
                 </Stack>
               </Stack>
               <div>
@@ -241,6 +206,7 @@ const Page = () => {
                  }}>
                   <RolesTable
                   setRolSelected = {setRolSelected}
+                  setIdRolSelected = {setIdRolSelected}
                   data = {data}
                    />
                 </Box>
@@ -277,12 +243,14 @@ const Page = () => {
                   // // flexDirection: 'row',
                   // margin: '3% 0 0 0'
                 }}>
-                  {/* {modulosRol.map((item, index) => (
-                    <div key={index}> */}
-                      <ModulePermission item={modulosRol} />
-                    {/* </div>
-                    
-                  ))} */}
+                      <ModulePermission
+                      rolSelected={rolSelected}
+                      idRolSelected={idRolSelected}
+                      checked={checked}
+                      setChecked={setChecked}
+                      loader={loader}
+                      idModules = {idModules}
+                      />
                 </FormGroup>
                 </>
                 }                

@@ -51,10 +51,10 @@ import { useAuth } from 'src/hooks/use-auth';
                     justifyContent: 'space-between'
                   }}>
                       <AccountProfile
-                      user={auth.user}/>
+                      user={auth.user === null?'':auth.user}/>
                       
                       <AccountProfileDetails
-                       user={auth.user} />
+                       user={auth.user === null?'':auth.user} />
                   </Box>
                     
                 </Stack>
@@ -62,7 +62,7 @@ import { useAuth } from 'src/hooks/use-auth';
             </Box>
             <SettingsPassword />
             <SettingsNotifications 
-            notification = {auth.user.notificationsEmail}
+            notification = {auth.user === null?'': auth.user.notificationsEmail}
             user={auth.user}/>
           </Stack>
         </Container>

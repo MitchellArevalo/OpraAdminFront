@@ -74,7 +74,6 @@ export default function CustomersTable(props) {
     console.log(user);
   }
   function handleDeleteClick(id) {
-    alert(id)
     let statusCode
     var requestOptions = {
       method: 'DELETE',
