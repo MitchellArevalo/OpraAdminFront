@@ -16,8 +16,17 @@ export const AuthGuard = (props) => {
 
   useEffect(
     () => {
-      const miArray = JSON.parse(localStorage.getItem('permissionSet'));
-      console.log(router.pathname);
+      // permissions.forEach((permission, index) => {
+        //   const permissionFormat = permission.name;
+      //   console.log('permiso name desde local storage: ' + permissionFormat.toLowerCase());
+      //   console.log('permiso name from path: ' + path.replace('/', ''));
+      //   console.log('permiso de vista' + permission.view)
+      //   if (pathFormat === permissionFormat.toLowerCase() && permission.view) {
+        //     setAuthRole(true);
+      //   }
+      //   // No se hace nada con router.pathname, considera eliminar esta línea si no se necesita
+      // });
+      // console.log('variable auth role: ' + authRole);
       if (!router.isReady) {
         return;
       }
@@ -28,19 +37,49 @@ export const AuthGuard = (props) => {
       }
 
       ignore.current = true;
+      
+      let authRole = false;
+      const permissions = JSON.parse(localStorage.getItem('permissionSet'));
+      const path = router.pathname.toString();
+      let pathFormat = path.replace('/', '');
+      switch (pathFormat) {
+        case '':
+          pathFormat = 'dashboard'
+          break;
+        case 'settings':
+          authRole =true;
+          break;
+        case 'entradasSalidas':
+          pathFormat = 'entradas_salidas'
+          break;
+
+        default:
+          break;
+      }
+      let permiso = permissions.filter(permise => permise.name.toLowerCase() === pathFormat);
+      permiso.map((per, index) => {
+        console.log('valor del view: ' + per.view);
+        authRole = per.view;
+      });
 
       if (!isAuthenticated) {
         console.log('Not authenticated, redirecting');
         router
+        .replace({
+          pathname: '/auth/login',
+          query: router.asPath !== '/' ? { continueUrl: router.asPath } : undefined
+          })
+          .catch(console.error);
+      }else if(!authRole){
+        console.log('Not Access to this page, redirecting');
+        router
           .replace({
-            pathname: '/auth/login',
+            pathname: '/404',
             query: router.asPath !== '/' ? { continueUrl: router.asPath } : undefined
           })
           .catch(console.error);
       } else {
         setChecked(true);
-        const miArray = JSON.parse(localStorage.getItem('permissionSet'));
-        console.log('array desde el local storage: ',miArray);
       }
     },
     [router.isReady]

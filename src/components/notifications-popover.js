@@ -33,8 +33,8 @@ export const NotificationsPopover = (props) => {
   // } 
 
   function handleReadedClick(idNotification){
-    console.log(idNotification);
-    console.log(readedNotification);
+    // console.log(idNotification);
+    // console.log(readedNotification);
     props.setNotificationQuantity(data.length);
      const newArrayA = data.slice();
      const index = newArrayA.find((item) => item.id === idNotification);
@@ -67,7 +67,7 @@ export const NotificationsPopover = (props) => {
 
   }
   const putMethod = async (requestOptions, idNotification) => {
-    fetch(endpoint + "/opradesign/notification/"+ idNotification, requestOptions)
+    fetch(endpoint + '/opradesign/notification/'+ idNotification, requestOptions)
       .then(response => response.text())
       .then(result => console.log(result))
       .catch(error => console.log('error', error));
@@ -105,8 +105,9 @@ export const NotificationsPopover = (props) => {
   /////////////////////////////////CONEXIÓN COMENTADA PARA QUE NO CONSUMA RECURSOS DE LA BASE DE DATOS Y DEL SERVICIO////////////////
   useEffect(() => {
 
+    let idEmpleado = auth.user === null?'':auth.user.idEmployee;
     // setLoadingUsers(false)
-    fetch(endpoint + '/opradesign/notification/employee/' + auth.user === null?'':auth.user.idEmployee)
+    fetch(endpoint + '/opradesign/notification/employee/' + idEmpleado)
       .then(response => {
         return response.json();
       })

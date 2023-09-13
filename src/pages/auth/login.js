@@ -88,6 +88,7 @@ const Page = () => {
         return response.json();
       })
       .then(data => {
+        console.log(data);
         setData(data);
         setLoadingData(true)
       })

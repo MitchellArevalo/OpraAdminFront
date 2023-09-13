@@ -48,7 +48,6 @@ export const SideNav = (props) => {
               delete: objeto.delete
             };
           });
-          console.log('modulos para el local storage: ' ,modulesStorage);
           localStorage.setItem('permissionSet', JSON.stringify(modulesStorage));
           
         } else {

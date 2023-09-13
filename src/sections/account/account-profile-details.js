@@ -11,7 +11,6 @@ import {
   Unstable_Grid2 as Grid
 } from '@mui/material';
 
-
 export const AccountProfileDetails = (props) => {
 
   const { user } = props

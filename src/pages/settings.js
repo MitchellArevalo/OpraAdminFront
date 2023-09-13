@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { useEffect } from 'react';
 import { Box, Container, Stack, Typography, Grid } from '@mui/material';
 import { SettingsNotifications } from 'src/sections/settings/settings-notifications';//Configuracion notificaciones
 import { SettingsPassword } from 'src/sections/settings/settings-password';
@@ -6,9 +7,20 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { AccountProfile } from 'src/sections/account/account-profile';
 import { AccountProfileDetails } from 'src/sections/account/account-profile-details';
 import { useAuth } from 'src/hooks/use-auth';
+import { AES, enc } from 'crypto-js';
 
   const Page = () => {
     const auth = useAuth();
+    
+    function desencriptarPassword(password) {
+      return AES.decrypt(password, 'secretPassword').toString(enc.Utf8);
+    }
+    useEffect(() => {
+      let passwordDesencripted = desencriptarPassword(auth.user.password);
+      console.log('contraseña desencriptada: ', passwordDesencripted);
+    }, [])
+    
+    
     return(
       <>
       <Head>

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
+import CryptoJS from 'crypto-js';
 
 //Clase para autenticar el inicio de sesión, cierre de sesión y deserializar la información del usuario que inicio el aplicativo
 const HANDLERS = {
@@ -86,7 +87,8 @@ export const AuthProvider = (props) => {
       const userData = JSON.parse(userDataJson);
       // console.log(userData)
       // console.log(userData.contrasena);
-
+      // userData.password
+      
       const user = {
         idEmployee: userData.idEmployee,
           avatar: userData.avatar,
@@ -126,7 +128,7 @@ export const AuthProvider = (props) => {
     const filteredData = data.filter((item) =>
     item.email.toLowerCase().includes(email.toLowerCase()) 
     );
-
+    console.log('data filtrada: ',filteredData)
     if(filteredData.length < 1){
       throw new Error('Verifique su correo y contraseña por favor');
     }
@@ -147,12 +149,12 @@ export const AuthProvider = (props) => {
     } catch (err) {
       console.error(err);
     }
+    const passwordEncrypted = CryptoJS.AES.encrypt(filteredData[0].password, 'secretPassword').toString();
 
     const user = {
       idEmployee: filteredData[0].idEmployee,
       avatar: filteredData[0].avatar,
       username: filteredData[0].username,
-      password: filteredData[0].password,
       document: filteredData[0].document,
       name: filteredData[0].name,
       email: filteredData[0].email,
@@ -163,6 +165,12 @@ export const AuthProvider = (props) => {
         nombre: filteredData[0].rol.nombre
       }
     };
+
+    window.sessionStorage.setItem('userData', JSON.stringify(user));
+    // window.sessionStorage.setItem('passwordEncrypted', passwordEncrypted);
+
+    // Otra opción es almacenar la contraseña encriptada dentro del objeto `user` con una propiedad separada
+    user.password = passwordEncrypted;
     window.sessionStorage.setItem('userData', JSON.stringify(user));
 
     dispatch({
