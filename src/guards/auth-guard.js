@@ -16,22 +16,11 @@ export const AuthGuard = (props) => {
 
   useEffect(
     () => {
-      // permissions.forEach((permission, index) => {
-        //   const permissionFormat = permission.name;
-      //   console.log('permiso name desde local storage: ' + permissionFormat.toLowerCase());
-      //   console.log('permiso name from path: ' + path.replace('/', ''));
-      //   console.log('permiso de vista' + permission.view)
-      //   if (pathFormat === permissionFormat.toLowerCase() && permission.view) {
-        //     setAuthRole(true);
-      //   }
-      //   // No se hace nada con router.pathname, considera eliminar esta línea si no se necesita
-      // });
-      // console.log('variable auth role: ' + authRole);
+      
       if (!router.isReady) {
         return;
       }
 
-      // Prevent from calling twice in development mode with React.StrictMode enabled
       if (ignore.current) {
         return;
       }

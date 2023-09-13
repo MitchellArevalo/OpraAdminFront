@@ -18,6 +18,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AlertMessage from 'src/components/alertMessage';
 import EmailIcon from '@mui/icons-material/Email';
 import ExportToExcel from 'src/components/exportToExcel';
+import ImportFromExcel from 'src/components/importFromExcel';
 import HomeIcon from '@mui/icons-material/Home';
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -162,10 +163,31 @@ const Page = () => {
   const [recharge, setRecharge] = useState(false);
   const [busquedaFallida, setBusquedaFallida] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openModalEdit, setOpenModalEdit] = useState(false);
+  const [dataModalEdit, setDataModalEdit] = useState([]);
   const anchorRef = useRef(null);
   const endpoint = useContext(ApiContext);
 
   const [dataForm, setDataForm] = useState({
+    name: "",
+    email: "",
+    documento: "",
+    username: "",
+    telefono: "",
+    password: "",
+    errorTelefono: false,
+    errorDocumento: false,
+    errorNombre: false,
+    errorUsername: false,
+    errorPassword: false,
+    errorEmail: false,
+    errorAddress: false,
+    launchError: true,
+    profileImage: "",
+    rol: "",
+    address: ""
+  })
+  const [dataFormEdit, setDataFormEdit] = useState({
     name: "",
     email: "",
     documento: "",
@@ -205,7 +227,28 @@ const Page = () => {
       rol: "",
       address: ""
     })
+    setDataFormEdit({
+      ...dataFormEdit,
+      username: "",
+      name: "",
+      email: "",
+      documento: "",
+      password: "",
+      telefono: "",
+      errorDocumento: false,
+      errorTelefono: false,
+      errorNombre: false,
+      errorUsername: false,
+      errorEmail: false,
+      errorPassword: false,
+      errorAddress: false,
+      launchError: true,
+      profileImage: "",
+      rol: "",
+      address: ""
+    })
     setOpenModal(false);
+    setOpenModalEdit(false);
   }
   useEffect(() => {
     let statusCode = 0;
@@ -263,6 +306,23 @@ const Page = () => {
       });
 
   }, [recharge]);
+  useEffect(() => {
+    dataModalEdit.forEach((item, index) => {
+      setDataFormEdit({
+        ...dataFormEdit,
+        username: item.username,
+        name: item.name,
+        email: item.email,
+        documento: item.document,
+        password: item.password,
+        telefono: item.phoneNumber,
+        profileImage: item.avatar,
+        rol: item.rol.nombre,
+        address: item.address
+      })
+    });
+  }, [dataModalEdit])
+  
   const handleOpen = () => setOpenModal(true);
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -596,7 +656,8 @@ const Page = () => {
                   direction="row"
                   spacing={1}
                 >
-                  <Button
+                  <ImportFromExcel/>
+                  {/* <Button
                     color="inherit"
                     startIcon={(
                       <SvgIcon fontSize="small">
@@ -605,7 +666,7 @@ const Page = () => {
                     )}
                   >
                     Importar
-                  </Button>
+                  </Button> */}
                   <ExportToExcel 
                   data={usersWithOutImage}
                   mainComponent={'Usuarios'}/>
@@ -935,6 +996,304 @@ const Page = () => {
               type={typeError}
               message={messageError}
             />
+            <ModalUtility
+                  openModal={openModalEdit}
+                  setOpenModal={setOpenModalEdit}
+                  styleModal={screenWidth > 800 ? styleModal : styleModalMobile}
+                >
+                  <Box
+                    sx={{
+                      height: '100%',
+                      width: '100%',
+                      borderRadius: 1
+                    }}>
+                    <Box
+                      sx={screenWidth > 800 ? styleTitleModal : styleTitleModalMobile}>
+                      <Typography
+                        sx={{
+                          height: '100%',
+                          width: '100%',
+                          fontWeight: 'bold',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center'
+                        }}>
+                        Editar usuario
+                      </Typography>
+                    </Box>
+                    <Divider />
+                    <Box
+                      sx={screenWidth > 800 ? styleModalInformation : styleModalInformationMobile}>
+                      <Box
+                        sx={screenWidth > 800 ? styleModalImage : styleModalImageMobile}>
+                        <Box
+                          sx={screenWidth > 800 ? styleImageContainer : styleImageContainerMobile}>
+                          {
+                            dataForm?.profileImage == "" ?
+                              <Box
+                                sx={{
+                                  width: '100%',
+                                  height: '100%',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  justifyContent: 'center',
+                                  alignItems: 'center'
+                                }}>
+                                <CloudUploadIcon
+                                  sx={{
+                                    height: '50%',
+                                    width: '50%'
+                                  }} />
+                                <Typography
+                                  sx={{
+                                    textAlign: 'center',
+                                    fontWeight: 'bold'
+                                  }}>
+                                  Arrastre una imagen o presione aquí para cargarla
+                                </Typography>
+                              </Box>
+                              :
+                              <Box
+                                sx={{
+                                  height: '90%',
+                                  borderRadius: '10px'
+                                }}>
+                                <img src={dataForm?.profileImage}
+                                  alt="Imagen cargada"
+                                  style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'contain',
+                                    borderRadius: '10px',
+                                    boxShadow: '0px 2px 8px 0px rgba(99, 99, 99, 0.2)'
+                                  }}
+                                />
+                              </Box>
+                          }
+
+                          <input type="file"
+                            accept="image/png,image/jpeg"
+                            onChange={handleImageChange}
+                            style={screenWidth > 800 ? styleUploadFiles : styleUploadFilesMobile}
+                          />
+                        </Box>
+                      </Box>
+                      <Box
+                        sx={screenWidth > 800 ? styleFieldsModal : styleFieldsModalMobile}>
+                        <Box sx={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          justifyContent: 'space-between',
+                          marginTop: 3
+                        }}>
+
+
+                          <TextField
+                            label="Nombre*"
+                            value={dataFormEdit?.name}
+                            error={dataFormEdit?.errorNombre}
+                            helperText={dataFormEdit?.errorNombre ? "Campo obligatorio" : ''}
+                            onChange={validationFields}
+                            onBlur={errorFieldsValidation}
+                            id="name"
+                            sx={{ width: '49%' }}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start"></InputAdornment>,
+                            }}
+                          />
+                          <TextField
+                            label="username*"
+                            value={dataFormEdit?.username}
+                            error={dataFormEdit?.errorUsername}
+                            helperText={dataFormEdit?.errorUsername ? "Campo obligatorio" : ''}
+                            onChange={validationFields}
+                            onBlur={errorFieldsValidation}
+                            id="username"
+                            sx={{ width: '49%' }}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start">@</InputAdornment>,
+                            }}
+                          />
+                        </Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
+
+                          <TextField
+                            id="documento"
+                            label="Documento*"
+                            error={dataFormEdit?.errorDocumento}
+                            value={dataFormEdit?.documento}
+                            onChange={validationFields}
+                            onBlur={errorFieldsValidation}
+                            helperText={dataFormEdit?.errorDocumento ? "Campo obligatorio" : ''}
+                            type="number"
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            sx={{ width: '49%' }}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start">CC</InputAdornment>,
+                              inputMode: 'numeric',
+                              pattern: '[0-9]*'
+                            }}
+                          />
+                          <TextField
+                            id="password"
+                            label="Contraseña*"
+                            error={dataFormEdit?.errorPassword}
+                            helperText={dataFormEdit?.errorPassword ? "Campo obligatorio" : ''}
+                            value={dataFormEdit?.password}
+                            type="password"
+                            onChange={validationFields}
+                            onBlur={errorFieldsValidation}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            sx={{ width: '49%' }}
+                          />
+                            
+
+                        </Box>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: 3 }}>
+
+                          <TextField
+                            id="telefono"
+                            error={dataFormEdit?.errorTelefono}
+                            label="Teléfono*"
+                            value={dataFormEdit?.telefono}
+                            onChange={validationFields}
+                            onBlur={errorFieldsValidation}
+                            type="number"
+                            helperText={dataFormEdit?.errorTelefono ? "Campo obligatorio" : ''}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            sx={{ width: '49%' }}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start">#</InputAdornment>,
+                              inputMode: 'numeric',
+                              pattern: '[0-9]*'
+                            }}
+                          />
+                          <FormControl variant="filled"
+                            sx={{ width: '49%' }}>
+                            <InputLabel id="rolInput">Rol</InputLabel>
+                            <Select
+                              labelId="rolInput"
+                              id="rol"
+                              value={dataFormEdit?.rol}
+                              onChange={handleClickChangeRol}
+                            >
+                              {roles.length < 1 ?
+                                ''
+                                :
+                                roles.map((option) => (
+                                  <MenuItem key={option.idRol}
+                                    id={option.idRol}
+                                    value={option.idRol}>
+                                    {option.nombre}
+                                  </MenuItem>
+                                ))}
+                            </Select>
+                          </FormControl>
+                        </Box>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: 3 }}>
+
+                          <TextField
+                            id="email"
+                            error={dataFormEdit?.errorEmail}
+                            label="Correo electrónico*"
+                            value={dataFormEdit?.email}
+                            onChange={validationFields}
+                            onBlur={errorFieldsValidation}
+                            type="email"
+                            helperText={dataFormEdit?.errorEmail ? "Campo obligatorio" : ''}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            sx={{ width: '100%' }}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start"><EmailIcon /></InputAdornment>,
+                            }}
+                          />
+                        </Box>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: 3 }}>
+
+                          <TextField
+                            id="address"
+                            error={dataFormEdit?.errorAddress}
+                            label="Dirección*"
+                            value={dataFormEdit?.address}
+                            onChange={validationFields}
+                            onBlur={errorFieldsValidation}
+                            type="email"
+                            helperText={dataFormEdit?.errorAddress ? "Campo obligatorio" : ''}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            sx={{ width: '100%' }}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start"><HomeIcon /></InputAdornment>,
+                            }}
+                          />
+                        </Box>
+
+                      </Box>
+
+                    </Box>
+                    <Divider orientation="vertical"
+                      variant="middle"
+                      flexItem />
+                    <Box
+                      sx={{
+                        height: '15%',
+                        width: '100%',
+                        display: 'flex',
+                        backgroundColor: '#d9d9d9'
+                      }}>
+
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'right',
+                          height: '80%',
+                          width: '50%'
+                        }}>
+                        <Button variant="outlined"
+                          onClick={clearFields}
+                          sx={{
+                            margin: '0 16px',
+                            backgroundColor: 'white'
+                          }}>
+                          <CloseIcon /> Cancelar
+                        </Button>
+                      </Box>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'left',
+                          width: '50%',
+                          height: '80%'
+                        }}>
+                        <LoadingButton
+                          onClick={handleClick}
+                          loading={loading}
+                          loadingPosition="start"
+                          startIcon={<SaveIcon />}
+                          variant="contained"
+
+                          sx={{
+                            margin: '0 16px',
+                          }}
+                        >
+                          <span>Guardar</span>
+                        </LoadingButton>
+                      </Box>
+                    </Box>
+                  </Box>
+
+                </ModalUtility>
             {loadingUsers ?
               <CustomersTable
                 data={filteredDataUsers.length > 0 ? filteredDataUsers : data}
@@ -945,6 +1304,8 @@ const Page = () => {
                 setOpenError = {setOpenError}
                 setTypeError = {setTypeError}
                 setMessageError = {setMessageError}
+                setDataModalEdit={setDataModalEdit}
+                setOpenModalEdit={setOpenModalEdit}
               /> :
               <Box
                 sx={{

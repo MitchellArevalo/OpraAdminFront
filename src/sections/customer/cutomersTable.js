@@ -66,12 +66,25 @@ const columns = [
 
 export default function CustomersTable(props) {
   
-  const { setLoading, setOpenError, setTypeError, setMessageError, setRecharge, recharge } = props;
+  const { 
+    setLoading,
+    setOpenError, 
+    setTypeError, 
+    setMessageError, 
+    setRecharge, 
+    recharge,
+    setOpenModalEdit,
+    setDataModalEdit
+   } = props;
 
   const endpoint = useContext(ApiContext);
 
   function handleEditClick(user){
     console.log(user);
+    let arrayAsignment = []
+    arrayAsignment.push(user)
+    setDataModalEdit(arrayAsignment);
+    setOpenModalEdit(true)
   }
   function handleDeleteClick(id) {
     let statusCode
@@ -175,7 +188,7 @@ export default function CustomersTable(props) {
                         // filter : 'saturate(50%)'
                       }}
                       src={
-                        data.avatar.includes("base64")
+                        data.avatar.includes("base64") || data.avatar.includes("https")
                           ? data.avatar
                           : "https://www.dl.dropboxusercontent.com/scl/fi/uuew6bjab92ehc4aeugai/UserGray.png?rlkey=pcy2659qro6fxtqjsctpw6ytl&dl=0"
                       }

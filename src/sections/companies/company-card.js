@@ -336,13 +336,14 @@ const styleFieldsModalMobile = {
                                 }}
                               />
                               <TextField
-                                label="Costo*"
+                                label="Costo"
                                 value={costoValue}
                                 onChange={validationFields}
                                 id="Costo"
                                 sx={{ width: '49%'}}
                                 InputProps={{
                                   startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                                  readOnly: true,
                                 }}
                               />
                         </Box>
@@ -350,7 +351,7 @@ const styleFieldsModalMobile = {
                             
                               <TextField
                                  id="Cantidad"
-                                 label="Cantidad*"
+                                 label="Cantidad"
                                  value={cantidadValue}
                                  onChange={validationFields}
                                  type="number"
@@ -360,6 +361,7 @@ const styleFieldsModalMobile = {
                                 sx={{ width: '49%'}}
                                 InputProps={{
                                   startAdornment: <InputAdornment position="start">#</InputAdornment>,
+                                  readOnly: true,
                                 }}
                               />
                               <TextField
