@@ -23,6 +23,7 @@ import Switch from '@mui/material/Switch';
 import ModulePermission from 'src/components/ModulePermission';
 import { ApiContext } from 'src/contexts/Api-context';
 import ModalUtility from 'src/components/modalUtility';
+import AlertMessage from 'src/components/alertMessage';
 
 
 const styleModal = {
@@ -45,9 +46,13 @@ const Page = () => {
     const [ loader, setLoader ] = useState(true);
     const [ data, setData ] = useState([]);
     const [ idModules, setIdModules ] = useState([]);
+    const [alert, setOpenAlert] = useState(false);
+    const [typeAlert, setTypeAlert] = useState("");
+    const [messageAlert, setMessageAlert] = useState("")
     const [openModal, setOpenModal] = useState(false);
+    const [rechargeData, setRechargeData] = useState(false);
     const endpoint = useContext(ApiContext);
-    const [name, setName] = useState('Cat in the Hat');
+    const [name, setName] = useState('');
     const [checked, setChecked] = useState(
       {
           idModule: idRolSelected,
@@ -90,10 +95,44 @@ const Page = () => {
       }
   );
     
+  const rebootValues = () =>{
+    setChecked({
+      ...checked,
+      idModule: idRolSelected,
+        moduleName: rolSelected,
+        UsuariosCreate: false,
+        UsuariosEdit: false,
+        UsuariosView: false,
+        UsuariosDelete: false,
+        RolesCreate: false,
+        RolesEdit: false,
+        RolesView: false,
+        RolesDelete: false,
+        InventarioCreate: false,
+        InventarioEdit: false,
+        InventarioView: false,
+        InventarioDelete: false,
+        ClientesCreate: false,
+        ClientesEdit: false,
+        ClientesView: false,
+        ClientesDelete: false,
+        VentasCreate: false,
+        VentasEdit: false,
+        VentasView: false,
+        VentasDelete: false,
+        Entradas_SalidasCreate: false,
+        Entradas_SalidasEdit: false,
+        Entradas_SalidasView: false,
+        Entradas_SalidasDelete: false,
+        DashboardCreate: false,
+        DashboardEdit: false,
+        DashboardView: false,
+        DashboardDelete: false,
+    })
+    setRolSelected('');
+  }
   useEffect(() => {
     let statusCode = 0;
-    console.log(idRolSelected);
-    console.log(endpoint + '/opradesign/modulosrol/rol/' + idRolSelected);
     fetch( endpoint + '/opradesign/modulosrol/rol/' + idRolSelected)
       .then(response => {
         statusCode = response.status;
@@ -102,7 +141,6 @@ const Page = () => {
       .then(data => {
         if (statusCode === 200) {
           data.forEach(module => {
-            console.log(module);
             let campo = module.name;
             setChecked((prevState) => ({
               ...prevState,
@@ -120,25 +158,22 @@ const Page = () => {
           });
           
           setIdModules(modulesfilter);
-          console.log(data);
-          console.log('ID DE LOS MODULOS');
-          console.log(idModules);
           setLoader(false);
           
         } else {
-          setOpenError(true);
-          setTypeError('error');
-          setMessageError('Ocurrió un error inesperado con los roles, consulte con su administrador')
+          setOpenAlert(true);
+          setTypeAlert('error');
+          setMessageAlert('Ocurrió un error inesperado con los roles, consulte con su administrador')
         }
       })
       .catch(error => {
         // Manejar el error
         console.error('Error:', error);
-        // setOpenError(true);
-        // setTypeError('error');
-        // setMessageError('Ocurrió un error al conectarse con la base de datos de los roles y generó la siguiente excepción: ' + error.nombreExcepcion + ': ' + error.mensaje);
+        setOpenAlert(true);
+        setTypeAlert('error');
+        setMessageAlert('Ocurrió un error al conectarse con la base de datos de los roles y generó la siguiente excepción: ' + error.nombreExcepcion + ': ' + error.mensaje);
       });      
-  }, [idRolSelected])
+  }, [rechargeData])
   //idRolSelected
 
   useEffect(() => {
@@ -151,23 +186,23 @@ const Page = () => {
       .then(data => {
         if (statusCode === 200) {
           setData(data);
-          // console.log(data);
         } else {
-          // setOpenError(true);
-          // setTypeError('error');
-          // setMessageError('Ocurrió un error inesperado con los roles, consulte con su administrador')
+          setOpenAlert(true);
+          setTypeAlert('error');
+          setMessageAlert('Ocurrió un error inesperado con los roles, consulte con su administrador')
         }
       })
       .catch(error => {
         // Manejar el error
         console.error('Error:', error);
-        // setOpenError(true);
-        // setTypeError('error');
-        // setMessageError('Ocurrió un error al conectarse con la base de datos de los roles y generó la siguiente excepción: ' + error.nombreExcepcion + ': ' + error.mensaje);
+        setOpenAlert(true);
+        setTypeAlert('error');
+        setMessageAlert('Ocurrió un error al conectarse con la base de datos de los roles y generó la siguiente excepción: ' + error.nombreExcepcion + ': ' + error.mensaje);
       });
-  }, [])
+  }, [rechargeData])
     
   const handleClickModal = () =>{
+    rebootValues();
     setOpenModal(true);
   }
   return (
@@ -182,6 +217,12 @@ const Page = () => {
           py: 8,
         }}
       >
+        <AlertMessage
+              open={alert}
+              setOpen={setOpenAlert}
+              type={typeAlert}
+              message={messageAlert}
+            />
         <Container maxWidth="xl">
           <Stack spacing={3}>
             <Stack 
@@ -259,6 +300,13 @@ const Page = () => {
                         setChecked={setChecked}
                         loader={loader}
                         idModules = {idModules}
+                        setRolSelected = {setRolSelected}
+                        setOpenAlert={setOpenAlert}
+                        setTypeAlert={setTypeAlert}
+                        setMessageAlert={setMessageAlert}
+                        setRechargeData={setRechargeData}
+                        rechargeData={rechargeData}
+                        nameNewRole = {name}
                         />
                       </Box>
                     </Box>
@@ -283,6 +331,8 @@ const Page = () => {
                   <RolesTable
                   setRolSelected = {setRolSelected}
                   setIdRolSelected = {setIdRolSelected}
+                  setRechargeData={setRechargeData}
+                  rechargeData={rechargeData}
                   data = {data}
                    />
                 </Box>
@@ -326,6 +376,12 @@ const Page = () => {
                       setChecked={setChecked}
                       loader={loader}
                       idModules = {idModules}
+                      setRolSelected = {setRolSelected}
+                      setOpenAlert={setOpenAlert}
+                      setTypeAlert={setTypeAlert}
+                      setMessageAlert={setMessageAlert}
+                      setRechargeData={setRechargeData}
+                      rechargeData={rechargeData}
                       />
                 </FormGroup>
                 </>

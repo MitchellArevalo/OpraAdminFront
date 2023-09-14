@@ -1,138 +1,81 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { indigo, error } from "src/theme/colors";
+import AlertMessage from 'src/components/alertMessage';
+import { ApiContext } from 'src/contexts/Api-context';
 import ListSubheader from '@mui/material/ListSubheader';
+import Button from '@mui/material/Button'
   
   export default function RolesTable(props) {
     
-    const {setRolSelected, setIdRolSelected, data} = props;
-    // const data = [
-    //     {
-    //         Nombre: "Administrador"
-    //     },
-    //     {
-    //         Nombre: "Vendedor"
-    //     },
-    //     {
-    //         Nombre: "Gerente"
-    //     }
-    // ]
+    const {setRolSelected, setIdRolSelected, data, setRechargeData, rechargeData} = props;
 
-  //   const data = [
-  //     {
-  //         idModulo: 1,
-  //         modulo: {
-  //             idModulo: 1,
-  //             name: "Usuarios",
-  //             edit: true,
-  //             view: true,
-  //             create: true,
-  //             delete: true
-  //         },
-  //         rol: {
-  //             idRol: 1,
-  //             nombre: "Administrador"
-  //         }
-  //     },
-  //     {
-  //         idModulo: 2,
-  //         modulo: {
-  //             idModulo: 2,
-  //             name: "Roles",
-  //             edit: true,
-  //             view: true,
-  //             create: true,
-  //             delete: true
-  //         },
-  //         rol: {
-  //             idRol: 1,
-  //             nombre: "Administrador"
-  //         }
-  //     },
-  //     {
-  //         idModulo: 3,
-  //         modulo: {
-  //             idModulo: 3,
-  //             name: "Inventario",
-  //             edit: true,
-  //             view: true,
-  //             create: true,
-  //             delete: true
-  //         },
-  //         rol: {
-  //             idRol: 1,
-  //             nombre: "Administrador"
-  //         }
-  //     },
-  //     {
-  //         idModulo: 4,
-  //         modulo: {
-  //             idModulo: 4,
-  //             name: "Clientes",
-  //             edit: true,
-  //             view: true,
-  //             create: true,
-  //             delete: true
-  //         },
-  //         rol: {
-  //             idRol: 1,
-  //             nombre: "Administrador"
-  //         }
-  //     },
-  //     {
-  //         idModulo: 5,
-  //         modulo: {
-  //             idModulo: 5,
-  //             name: "Ventas",
-  //             edit: true,
-  //             view: true,
-  //             create: true,
-  //             delete: true
-  //         },
-  //         rol: {
-  //             idRol: 1,
-  //             nombre: "Administrador"
-  //         }
-  //     },
-  //     {
-  //         idModulo: 6,
-  //         modulo: {
-  //             idModulo: 6,
-  //             name: "Entradas/Salidas",
-  //             edit: true,
-  //             view: true,
-  //             create: true,
-  //             delete: true
-  //         },
-  //         rol: {
-  //             idRol: 1,
-  //             nombre: "Administrador"
-  //         }
-  //     },
-  //     {
-  //         idModulo: 7,
-  //         modulo: {
-  //             idModulo: 7,
-  //             name: "Dashboard",
-  //             edit: true,
-  //             view: true,
-  //             create: true,
-  //             delete: true
-  //         },
-  //         rol: {
-  //             idRol: 1,
-  //             nombre: "Administrador"
-  //         }
-  //     },
-      
-  // ]
+    const endpoint = useContext(ApiContext);
+    const [alert, setOpenAlert] = useState(false);
+    const [typeAlert, setTypeAlert] = useState("");
+    const [messageAlert, setMessageAlert] = useState("")
 
     const handleClick = (event) =>{
         setRolSelected(event.target.innerText)
+        setRechargeData(!rechargeData)
+    }
+
+    function handleDeleteClick(idRol){
+      var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+      };
+      
+      fetch(endpoint +"/opradesign/modulosrol/rol/"+idRol, requestOptions)
+        .then(response => response.json())
+        .then(result => {
+            console.log('Resultado:', result);
+            result.forEach(item => {
+              var myHeaders = new Headers();
+              myHeaders.append("Content-Type", "application/json");
+
+              var raw = JSON.stringify({
+                "idModulo": item.idModulo
+              });
+
+              var requestOptions = {
+                method: 'DELETE',
+                headers: myHeaders,
+                body: raw,
+                 redirect: 'follow'
+              };
+
+          fetch(endpoint + "/opradesign/modulosrol/rol/"+idRol, requestOptions)
+            .then(response => response.json())
+            .then(result => console.log('Rol eliminado con éxito' , result))
+            .catch(error => console.log('error', error));
+                      });
+        })
+        .catch(error => console.log('error', error));
+
+      var requestOptions = {
+        method: 'DELETE',
+        redirect: 'follow'
+      };
+      
+      fetch( endpoint + "/opradesign/rol/"+idRol, requestOptions)
+        .then(response => response.text())
+        .then(result => {
+          setOpenAlert(true);
+          setTypeAlert('success');
+          setMessageAlert('Rol eliminado con éxito');
+        })
+        .catch(error => console.log('error', error));
+        setRechargeData(!rechargeData)
+        setRolSelected('');
+        setIdRolSelected(0);
     }
 
     function assignIdRol(id){
@@ -153,6 +96,12 @@ import ListSubheader from '@mui/material/ListSubheader';
       }}
       subheader={<li />}
     >
+      <AlertMessage
+        open={alert}
+        setOpen={setOpenAlert}
+        type={typeAlert}
+        message={messageAlert}
+      />
       {data.map((item, index) => (
         <li key={`section-${item}`}>
           <ul>
@@ -173,6 +122,19 @@ import ListSubheader from '@mui/material/ListSubheader';
                     id={item.id} 
                     primary={item.nombre} />
                 </ListItemButton>
+                <IconButton 
+                    aria-label="delete"
+                    size="large">
+                      <DeleteIcon
+                      onClick={() => handleDeleteClick(item.idRol)}
+                      fontSize="inherit"
+                      sx={{
+                        "&:hover": {
+                          color: error.main,
+                        },
+                      }}
+                      />
+                </IconButton>
               </ListItem>
             
           </ul>

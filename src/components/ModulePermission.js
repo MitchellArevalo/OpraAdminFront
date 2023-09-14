@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { ApiContext } from 'src/contexts/Api-context';
 import {
     Box,
     Button,
@@ -24,10 +25,35 @@ const stylePapers = {
     margin: '3% 0',
     padding: '4%'
 }
-export default function ModulePermission(props) {
-    const { rolSelected, idRolSelected, checked, setChecked, loader, idModules } = props    
-    const [loading, setLoading] = useState(false);
+const modulosDisponibles = [
+    {
+        name: 'Usuarios'
+    },
+    {
+        name: 'Roles'
+    },
+    {
+        name: 'Inventario'
+    },
+    {
+        name: 'Clientes'
+    },
+    {
+        name: 'Ventas'
+    },
+    {
+        name: 'Entradas_Salidas'
+    },
+    {
+        name: 'Dashboard'
+    },
+]
 
+export default function ModulePermission(props) {
+    const { rolSelected, idRolSelected, checked, setChecked, loader, idModules, setRolSelected, setOpenAlert, setTypeAlert, setMessageAlert, setRechargeData, rechargeData, nameNewRole} = props    
+    const [loading, setLoading] = useState(false);
+    const [ idRolCreated, setIdRolCreated ] = useState(0)
+    const endpoint = useContext(ApiContext);
     const clearFields = () => {
         setChecked({
           ...checked,
@@ -62,9 +88,161 @@ export default function ModulePermission(props) {
             DashboardView: false,
             DashboardDelete: false,
         })
+        setRolSelected('');
+        setRechargeData(!rechargeData)
     }
-    function handleClick() {
-      setLoading(true);
+    
+    function obtenerIdPorNombre(nombre) {
+        const objetoEncontrado = idModules.find(objeto => objeto.name === nombre);
+        return objetoEncontrado ? objetoEncontrado.idModulo : null;
+    }
+    
+    function handleClick(idButton){
+        let succesfully = false;
+        // let idRolCreated = undefined;
+        let idsModulesCreated = [];
+        console.log('id del boton: ' + event.target.id);
+        setLoading(true);
+        if (idButton.length > 0) {
+            modulosDisponibles.forEach(item => {
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+    
+                var raw = JSON.stringify({
+                "name": item.name,
+                "edit": checked?.[item.name + 'Edit'],
+                "view": checked?.[item.name + 'View'],
+                "create": checked?.[item.name + 'Create'],
+                "delete": checked?.[item.name + 'Delete'],
+                });
+    
+                var requestOptions = {
+                method: 'PUT',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+                };
+    
+                console.log('valores a actualizar modulo ' + item.name);
+                console.log(raw);
+                
+                fetch(endpoint + "/opradesign/module/" + obtenerIdPorNombre(item.name) , requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+                
+            });
+            clearFields();
+            setOpenAlert(true);
+            setTypeAlert('success');
+            setMessageAlert('Cambios realizados correctamente');
+        }else{
+            
+            var myHeadersPostRol = new Headers();
+            myHeadersPostRol.append("Content-Type", "application/json");
+
+            var rawRol = JSON.stringify({
+            "nombre": nameNewRole
+            });
+
+            var requestOptions = {
+            method: 'POST',
+            headers: myHeadersPostRol,
+            body: rawRol,
+            redirect: 'follow'
+            };
+
+            let statusCode
+            fetch(endpoint + "/opradesign/rol", requestOptions)
+            .then(response => {
+                statusCode = response.status;
+                return response.json();
+              })
+              .then(data => {
+                if (statusCode === 201) {
+                    console.log(data);
+                    console.log(data.valor)
+                    setIdRolCreated(data.valor);
+                    if(data.valor > 0){
+                  
+                        modulosDisponibles.forEach(item => {
+                            var myHeaders = new Headers();
+                            myHeaders.append("Content-Type", "application/json");
+                
+                            var raw = JSON.stringify({
+                            "name": item.name,
+                            "edit": checked?.[item.name + 'Edit'],
+                            "view": checked?.[item.name + 'View'],
+                            "create": checked?.[item.name + 'Create'],
+                            "delete": checked?.[item.name + 'Delete'],
+                            });
+                
+                            var requestOptions = {
+                            method: 'POST',
+                            headers: myHeaders,
+                            body: raw,
+                            redirect: 'follow'
+                            };
+                            
+                            fetch(endpoint + "/opradesign/module" , requestOptions)
+                            .then(response => response.json())
+                            .then(result => {
+                                  console.log('data de la creación de los modulos: ', result)
+                                  var myHeaders = new Headers();
+                                  myHeaders.append("Content-Type", "application/json");
+                  
+                                  var raw = JSON.stringify({
+                                  "idModulo": result.valor,
+                                  "idRol": data.valor
+                                  });
+                  
+                                  var requestOptions = {
+                                  method: 'POST',
+                                  headers: myHeaders,
+                                  body: raw,
+                                  redirect: 'follow'
+                                  };
+                  
+                                  fetch(endpoint + "/opradesign/modulosrol/", requestOptions)
+                                  .then(ultimaRespuesta => ultimaRespuesta.text())
+                                  .then(result => {
+                                      console.log(result)
+                                      clearFields();
+                                      setOpenAlert(true);
+                                      setTypeAlert('success');
+                                      setMessageAlert('Modulo creado correctamente');
+                                  })
+                                  .catch(error => {
+                                    setLoading(false);
+                                    setOpenAlert(true);
+                                    setTypeAlert('error');
+                                    setMessageAlert('Ocurrió un error al intentar crear el modulo' + error.nombreExcepcion + ' ' + error.mensaje);
+                                  });
+
+                            })
+                            .catch(error => console.log('error', error));
+                            
+                        });
+                    }
+                  
+                } else {
+                    console.log(data);
+                  setOpenAlert(true);
+                  setTypeAlert('error');
+                  setMessageAlert('Ocurrió un error al intentar crear el rol y generó la siguiente excepción: ' + data.nombreExcepcion + ': ' + data.mensaje)
+                  setLoading(false);
+                  return;
+                }
+              })
+              .catch(error => {
+                // Manejar el error
+                console.error('Error:', error);
+                setOpenAlert(true);
+                setTypeAlert('error');
+                setMessageAlert('Ocurrió un error al intentar crear el rol y generó la siguiente excepción: ' + error.nombreExcepcion + ': ' + error.mensaje);
+              });      
+        }
+        setLoading(false);
     }
     
     const Styles = {
@@ -409,8 +587,9 @@ export default function ModulePermission(props) {
                 alignItems: 'center'
             }}>
                 <LoadingButton
+                    id={rolSelected}
                     color="primary"
-                    onClick={handleClick}
+                    onClick={()=>{handleClick(rolSelected.length>0?rolSelected:'')}}
                     loading={loading}
                     loadingPosition="start"
                     startIcon={<SaveIcon />}
