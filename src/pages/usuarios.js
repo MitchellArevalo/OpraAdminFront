@@ -336,6 +336,18 @@ const Page = () => {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
+  const handleImageChangeEdit = (e) => {
+    if (e.target.files && e.target.files[0]) {
+
+      let reader = new FileReader();
+      reader.onload = (e) => {
+        setDataFormEdit({ ...dataFormEdit, profileImage: reader.result })
+        // console.log('e.target.result: '+e.target.result);//Base64
+        // console.log('reader.result: '+reader.result);
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
   function validarEmail(email) {
     const expresionRegular = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return expresionRegular.test(email);
@@ -473,6 +485,125 @@ const Page = () => {
     }
 
   }
+  const errorFieldsValidationEdit = (event) => {
+    //Función que realiza la validación de que los campos esten llenos y el que no lo señala para modificacion y no permite darle click a guardar con el booleano launchError
+    switch (event.target.id) {
+      case 'name':
+        if (event.target.value.length < 1) {
+          setDataFormEdit({
+            ...dataFormEdit,
+            launchError: true,
+            errorNombre: true
+          })
+        } else {
+          setDataFormEdit({ ...dataFormEdit, launchError: true })
+        }
+        break;
+      case 'documento':
+        if (event.target.value.length < 1) {
+          setDataFormEdit({
+            ...dataFormEdit,
+            launchError: true,
+            errorDocumento: true
+          })
+        } else {
+          setDataFormEdit({ ...dataFormEdit, launchError: true })
+        }
+        break;
+      case 'username':
+        //Hay que validar si el name de usuario existe para poder añadirse y poder cambiar la variable launchError 
+        if (event.target.value.length < 1) {
+          setDataFormEdit({
+            ...dataFormEdit,
+            errorUsername: true,
+            launchError: true
+          })
+
+        } else {
+          setDataFormEdit({ ...dataFormEdit, launchError: false })
+        }
+        break;
+      case 'telefono':
+        if (event.target.value.length < 1) {
+          setDataFormEdit({
+            ...dataFormEdit,
+            errorTelefono: true,
+            launchError: true
+          })
+        } else if (event.target.value.length != 10) {
+          setDataFormEdit({
+            ...dataFormEdit,
+            launchError: true,
+            errorTelefono: true
+          })
+          setOpenError(true);
+          setTypeError('warning');
+          setMessageError('El número del teléfono debe tener 10 carácteres')
+        } else {
+          setDataFormEdit({
+            ...dataFormEdit,
+            launchError: false,
+            errorTelefono: false
+          })
+        }
+        break;
+      case 'password':
+        if (event.target.value.length < 8) {
+          setDataFormEdit({
+            ...dataFormEdit,
+            launchError: true,
+            errorPassword: true
+          })
+          setOpenError(true);
+          setTypeError('warning');
+          setMessageError('La contraseña debe tener minimo 8 caracteres')
+        } else {
+          setDataFormEdit({
+            ...dataFormEdit,
+            launchError: false,
+            errorPassword: false
+          })
+        }
+        break;
+      case 'email':
+
+        if (event.target.value.length < 1) {
+          setDataFormEdit({
+            ...dataFormEdit,
+            launchError: true,
+            errorEmail: true
+          })
+        } else if (!validarEmail(event.target.value)) {
+          setDataFormEdit({
+            ...dataFormEdit,
+            launchError: true,
+            errorEmail: true
+          })
+          setOpenError(true);
+          setTypeError('warning');
+          setMessageError('El correo eléctronico no es válido')
+        } else {
+          setDataFormEdit({
+            ...dataFormEdit,
+            launchError: false,
+            errorEmail: false
+          })
+        }
+        break;
+      case 'address':
+        if (event.target.value.length < 1){
+          setDataFormEdit({
+            ...dataFormEdit,
+            launchError: true,
+            errorAddress: true
+          })
+        }
+        break
+      default:
+        break;
+    }
+
+  }
   const validationFields = (event) => {
     // console.log('Id del campo a tocar ' + event.target.id);
     //función que guarda los valores en los estados cada vez que los campos cambian
@@ -535,6 +666,76 @@ const Page = () => {
           // console.log('valor name: ' + event.target.value);
           setDataForm({
             ...dataForm,
+            address: event.target.value,
+            errorAddress: false
+          })
+          break;
+        default:
+        break;
+    }
+  }
+  const validationFieldsEdit = (event) => {
+    // console.log('Id del campo a tocar ' + event.target.id);
+    //función que guarda los valores en los estados cada vez que los campos cambian
+    // console.log('objeto  valor name: ' + JSON.stringify(dataForm));
+    switch (event.target.id) {
+      case 'name':
+        // console.log('valor name: ' + event.target.value);
+        setDataFormEdit({
+          ...dataFormEdit,
+          name: event.target.value,
+          errorNombre: false
+        })
+        break;
+      case 'documento':
+        // console.log('valor documento: ' + event.target.value);
+        if (event.target.value.length < 11) {
+          setDataFormEdit({
+            ...dataFormEdit,
+            documento: event.target.value,
+            errorDocumento: false
+          })
+        } else {
+          setOpenError(true);
+          setTypeError('warning');
+          setMessageError('El documento no puede tener mas de 10 carácteres')
+        }
+
+        break;
+      case 'username':
+        setDataFormEdit({
+          ...dataFormEdit,
+          username: event.target.value,
+          errorUsername: false
+        })
+        break;
+      case 'telefono':
+        setDataFormEdit({ ...dataFormEdit, errorTelefono: false })
+        if (event.target.value.length < 11) {
+          setDataFormEdit({ ...dataFormEdit, telefono: event.target.value })
+        } else {
+          setOpenError(true);
+          setTypeError('warning');
+          setMessageError('El número del teléfono no puede tener mas de 10 carácteres')
+        }
+        break;
+      case 'password':
+        setDataFormEdit({
+          ...dataFormEdit,
+          password: event.target.value,
+          errorPassword: false
+        })
+        break;
+      case 'email':
+        setDataFormEdit({
+          ...dataFormEdit, email: event.target.value,
+          errorEmail: false
+        })
+        break;
+        case 'address':
+          // console.log('valor name: ' + event.target.value);
+          setDataFormEdit({
+            ...dataFormEdit,
             address: event.target.value,
             errorAddress: false
           })
@@ -1029,7 +1230,7 @@ const Page = () => {
                         <Box
                           sx={screenWidth > 800 ? styleImageContainer : styleImageContainerMobile}>
                           {
-                            dataForm?.profileImage == "" ?
+                            dataFormEdit?.profileImage==='' ?
                               <Box
                                 sx={{
                                   width: '100%',
@@ -1058,7 +1259,11 @@ const Page = () => {
                                   height: '90%',
                                   borderRadius: '10px'
                                 }}>
-                                <img src={dataForm?.profileImage}
+                                <img src={ dataFormEdit?.profileImage.includes("base64") || dataFormEdit?.profileImage.includes("http") ?
+                                dataFormEdit?.profileImage
+                                :
+                                "https://www.dl.dropboxusercontent.com/scl/fi/uuew6bjab92ehc4aeugai/UserGray.png?rlkey=pcy2659qro6fxtqjsctpw6ytl&dl=0"}
+
                                   alt="Imagen cargada"
                                   style={{
                                     width: '100%',
@@ -1073,7 +1278,7 @@ const Page = () => {
 
                           <input type="file"
                             accept="image/png,image/jpeg"
-                            onChange={handleImageChange}
+                            onChange={handleImageChangeEdit}
                             style={screenWidth > 800 ? styleUploadFiles : styleUploadFilesMobile}
                           />
                         </Box>
@@ -1093,8 +1298,8 @@ const Page = () => {
                             value={dataFormEdit?.name}
                             error={dataFormEdit?.errorNombre}
                             helperText={dataFormEdit?.errorNombre ? "Campo obligatorio" : ''}
-                            onChange={validationFields}
-                            onBlur={errorFieldsValidation}
+                            onChange={validationFieldsEdit}
+                            onBlur={errorFieldsValidationEdit}
                             id="name"
                             sx={{ width: '49%' }}
                             InputProps={{
@@ -1106,8 +1311,8 @@ const Page = () => {
                             value={dataFormEdit?.username}
                             error={dataFormEdit?.errorUsername}
                             helperText={dataFormEdit?.errorUsername ? "Campo obligatorio" : ''}
-                            onChange={validationFields}
-                            onBlur={errorFieldsValidation}
+                            onChange={validationFieldsEdit}
+                            onBlur={errorFieldsValidationEdit}
                             id="username"
                             sx={{ width: '49%' }}
                             InputProps={{
@@ -1122,8 +1327,8 @@ const Page = () => {
                             label="Documento*"
                             error={dataFormEdit?.errorDocumento}
                             value={dataFormEdit?.documento}
-                            onChange={validationFields}
-                            onBlur={errorFieldsValidation}
+                            onChange={validationFieldsEdit}
+                            onBlur={errorFieldsValidationEdit}
                             helperText={dataFormEdit?.errorDocumento ? "Campo obligatorio" : ''}
                             type="number"
                             InputLabelProps={{
@@ -1143,8 +1348,8 @@ const Page = () => {
                             helperText={dataFormEdit?.errorPassword ? "Campo obligatorio" : ''}
                             value={dataFormEdit?.password}
                             type="password"
-                            onChange={validationFields}
-                            onBlur={errorFieldsValidation}
+                            onChange={validationFieldsEdit}
+                            onBlur={errorFieldsValidationEdit}
                             InputLabelProps={{
                               shrink: true,
                             }}
@@ -1160,8 +1365,8 @@ const Page = () => {
                             error={dataFormEdit?.errorTelefono}
                             label="Teléfono*"
                             value={dataFormEdit?.telefono}
-                            onChange={validationFields}
-                            onBlur={errorFieldsValidation}
+                            onChange={validationFieldsEdit}
+                            onBlur={errorFieldsValidationEdit}
                             type="number"
                             helperText={dataFormEdit?.errorTelefono ? "Campo obligatorio" : ''}
                             InputLabelProps={{
@@ -1203,8 +1408,8 @@ const Page = () => {
                             error={dataFormEdit?.errorEmail}
                             label="Correo electrónico*"
                             value={dataFormEdit?.email}
-                            onChange={validationFields}
-                            onBlur={errorFieldsValidation}
+                            onChange={validationFieldsEdit}
+                            onBlur={errorFieldsValidationEdit}
                             type="email"
                             helperText={dataFormEdit?.errorEmail ? "Campo obligatorio" : ''}
                             InputLabelProps={{
@@ -1223,8 +1428,8 @@ const Page = () => {
                             error={dataFormEdit?.errorAddress}
                             label="Dirección*"
                             value={dataFormEdit?.address}
-                            onChange={validationFields}
-                            onBlur={errorFieldsValidation}
+                            onChange={validationFieldsEdit}
+                            onBlur={errorFieldsValidationEdit}
                             type="email"
                             helperText={dataFormEdit?.errorAddress ? "Campo obligatorio" : ''}
                             InputLabelProps={{

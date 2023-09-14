@@ -8,7 +8,7 @@ import {
   Stack,
   SvgIcon,
   Typography,
-  InputAdornment,
+  TextField ,
   MenuItem,
   Divider,
 } from "@mui/material";
@@ -22,6 +22,22 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import ModulePermission from 'src/components/ModulePermission';
 import { ApiContext } from 'src/contexts/Api-context';
+import ModalUtility from 'src/components/modalUtility';
+
+
+const styleModal = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "40vw",
+  height: "40vh",
+  padding: "1%",
+  bgcolor: "background.paper",
+  boxShadow: 2,
+  borderRadius: 1,
+  overflow: "hidden",
+};
 
 const Page = () => {
     const [rolSelected, setRolSelected] = useState('');
@@ -29,7 +45,9 @@ const Page = () => {
     const [ loader, setLoader ] = useState(true);
     const [ data, setData ] = useState([]);
     const [ idModules, setIdModules ] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
     const endpoint = useContext(ApiContext);
+    const [name, setName] = useState('Cat in the Hat');
     const [checked, setChecked] = useState(
       {
           idModule: idRolSelected,
@@ -72,8 +90,6 @@ const Page = () => {
       }
   );
     
-  
-
   useEffect(() => {
     let statusCode = 0;
     console.log(idRolSelected);
@@ -151,6 +167,9 @@ const Page = () => {
       });
   }, [])
     
+  const handleClickModal = () =>{
+    setOpenModal(true);
+  }
   return (
     <>
       <Head>
@@ -178,6 +197,7 @@ const Page = () => {
               </Stack>
               <div>
                 <Button
+                onClick={handleClickModal}
                   startIcon={
                     <SvgIcon fontSize="small">
                       <PlusIcon />
@@ -187,6 +207,62 @@ const Page = () => {
                 >
                   Agregar
                 </Button>
+                <ModalUtility 
+                openModal={openModal} 
+                setOpenModal={setOpenModal} 
+                styleModal={styleModal}>
+                    <Box
+                    sx={{
+                      width:'100%',
+                      height: '100%',
+                      overflow:'auto'
+                      // backgroundColor: 'red'
+                    }}>
+                      <Box
+                      sx={{
+                        width: '100%',
+                        height: '15%',
+                        display:"flex",
+                        justifyContent:'center',
+                        alignItems: 'center',
+                        // backgroundColor: 'white'
+                      }}>
+                        <Typography 
+                        variant = 'h6'>
+                          Agregar rol
+                        </Typography>
+                      </Box>
+                      <Divider/>
+                      <Box
+                      sx={{
+                        // backgroundColor:'yellow',
+                        m: '1vh',
+                        display:"flex",
+                        justifyContent:'center',
+                        alignItems: 'center',
+                      }}>
+                        <TextField
+                          id="rol_name"
+                          label="Nombre rol"
+                          value={name}
+                          helperText='*El nombre del rol debe ser único'
+                          onChange={(event) => {
+                            setName(event.target.value);
+                          }}
+                        />
+                      </Box>
+                      <Box>
+                        <ModulePermission
+                        rolSelected={rolSelected}
+                        idRolSelected={idRolSelected}
+                        checked={checked}
+                        setChecked={setChecked}
+                        loader={loader}
+                        idModules = {idModules}
+                        />
+                      </Box>
+                    </Box>
+                </ModalUtility>
               </div>
             </Stack>
             <Box

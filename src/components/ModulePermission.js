@@ -18,6 +18,12 @@ import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CircularProgress from '@mui/material/CircularProgress';
 
+const stylePapers = {
+    width: '100%',
+    height: '20vh',
+    margin: '3% 0',
+    padding: '4%'
+}
 export default function ModulePermission(props) {
     const { rolSelected, idRolSelected, checked, setChecked, loader, idModules } = props    
     const [loading, setLoading] = useState(false);
@@ -116,13 +122,7 @@ export default function ModulePermission(props) {
         <>
             <Paper
             elevation={24}
-            sx={{
-                // backgroundColor:'red',
-                width: '100%',
-                height: '20vh',
-                margin: '3% 0',
-                padding: ' 0 2%'
-            }}>
+            sx={stylePapers}>
                 <Box>
                     <Typography
                     variant='h6'>
@@ -162,13 +162,7 @@ export default function ModulePermission(props) {
             </Paper>
             <Paper
             elevation={24}
-            sx={{
-                // backgroundColor:'red',
-                width: '100%',
-                height: '20vh',
-                margin: '3% 0',
-                padding: ' 0 2%'
-            }}>
+            sx={stylePapers}>
                 <Box>
                     <Typography
                     variant='h6'>
@@ -208,13 +202,7 @@ export default function ModulePermission(props) {
             </Paper>
             <Paper
             elevation={24}
-            sx={{
-                // backgroundColor:'red',
-                width: '100%',
-                height: '20vh',
-                margin: '3% 0',
-                padding: ' 0 2%'
-            }}>
+            sx={stylePapers}>
                 <Box>
                     <Typography
                     variant='h6'>
@@ -254,13 +242,7 @@ export default function ModulePermission(props) {
             </Paper>
             <Paper
             elevation={24}
-            sx={{
-                // backgroundColor:'red',
-                width: '100%',
-                height: '20vh',
-                margin: '3% 0',
-                padding: ' 0 2%'
-            }}>
+            sx={stylePapers}>
                 <Box>
                     <Typography
                     variant='h6'>
@@ -300,13 +282,7 @@ export default function ModulePermission(props) {
             </Paper>
             <Paper
             elevation={24}
-            sx={{
-                // backgroundColor:'red',
-                width: '100%',
-                height: '20vh',
-                margin: '3% 0',
-                padding: ' 0 2%'
-            }}>
+            sx={stylePapers}>
                 <Box>
                     <Typography
                     variant='h6'>
@@ -346,13 +322,7 @@ export default function ModulePermission(props) {
             </Paper>
             <Paper
             elevation={24}
-            sx={{
-                // backgroundColor:'red',
-                width: '100%',
-                height: '20vh',
-                margin: '3% 0',
-                padding: ' 0 2%'
-            }}>
+            sx={stylePapers}>
                 <Box>
                     <Typography
                     variant='h6'>
@@ -392,13 +362,7 @@ export default function ModulePermission(props) {
             </Paper>
             <Paper
             elevation={24}
-            sx={{
-                // backgroundColor:'red',
-                width: '100%',
-                height: '20vh',
-                margin: '3% 0',
-                padding: ' 0 2%'
-            }}>
+            sx={stylePapers}>
                 <Box>
                     <Typography
                     variant='h6'>
