@@ -32,7 +32,7 @@ const styleModal = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "40vw",
-  height: "40vh",
+  height: "70vh",
   padding: "1%",
   bgcolor: "background.paper",
   boxShadow: 2,
@@ -199,6 +199,7 @@ const Page = () => {
         setTypeAlert('error');
         setMessageAlert('Ocurrió un error al conectarse con la base de datos de los roles y generó la siguiente excepción: ' + error.nombreExcepcion + ': ' + error.mensaje);
       });
+      setName('');
   }, [rechargeData])
     
   const handleClickModal = () =>{
@@ -215,6 +216,8 @@ const Page = () => {
         sx={{
           flexGrow: 1,
           py: 8,
+          height:'80vh',
+          // backgroundColor:'red'
         }}
       >
         <AlertMessage
@@ -256,7 +259,7 @@ const Page = () => {
                     sx={{
                       width:'100%',
                       height: '100%',
-                      overflow:'auto'
+                      overflow:'auto',
                       // backgroundColor: 'red'
                     }}>
                       <Box
@@ -307,6 +310,7 @@ const Page = () => {
                         setRechargeData={setRechargeData}
                         rechargeData={rechargeData}
                         nameNewRole = {name}
+                        setOpenModal={setOpenModal}
                         />
                       </Box>
                     </Box>

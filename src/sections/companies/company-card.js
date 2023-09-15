@@ -21,13 +21,15 @@ import {
   Unstable_Grid2 as Grid
 } from '@mui/material';
 import ModalUtility from 'src/components/modalUtility';
+import DeleteIcon from '@mui/icons-material/Delete';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import AlertMessage from 'src/components/alertMessage';
 
 export const CompanyCard = (props) => {
-  const {  producto, screenWidth , setScreenWidth, setOpen , open} = props;
+  const {  producto, screenWidth , setScreenWidth, setOpen , open, categorias, recharge, setRecharge} = props;
 
   const [loading, setLoading] = React.useState(false);
   const [image, setImage] = useState(""); // Estado para almacenar la imagen cargada
@@ -36,6 +38,11 @@ export const CompanyCard = (props) => {
   const [cantidadValue, setCantidadValue] = useState("");
   const [descripccionValue, setDescripccionValue] = useState("");
   const [costoValue, setCostoValue] = useState("");
+  const [categoriaValue, setCategoriaValue] = useState(0);
+  const [idProduct, setIdProduct] = useState(0);
+  const [openAlert,setOpenAlert]= useState(false);
+  const [type, setType]= useState("");
+  const [message, setMessage] = useState("");
 
 ////Estilos Desktop/////
 const styleModal = {
@@ -83,7 +90,7 @@ const styleImageContainer = {
   justifyContent: 'center',
   alignItems: 'center'
 };
-const styleTitleModal = {
+const stylenameModal = {
   width: '100%',
   height: '15%'
 };
@@ -144,7 +151,7 @@ const styleImageContainerMobile = {
   justifyContent: 'center',
   alignItems: 'center'
 };
-const styleTitleModalMobile = {
+const stylenameModalMobile = {
   width: '100%',
   height: '10%'
 };
@@ -161,20 +168,75 @@ const styleFieldsModalMobile = {
   function handleClickSaveButton() {
     setLoading(true);
     setTimeout(() => {
+      saveProduct()
       setLoading(false);
       setOpen(true);
       clearFields();
+      setOpenAlert(true)
+      setMessage('Producto guardado con éxito')
+      setType('success')
     }, "3000");
     
   }
+  const saveProduct = () =>{
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    let raw = JSON.stringify({
+      "name": referenciaValue,
+      "idCategory": categoriaValue,
+      "itemCode": referenciaValue,
+      "size": "S,M,L,XL,XXL",
+      "description": descripccionValue,
+      "image": image
+    });
+
+    let requestOptions = {
+      method: 'PUT',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch(endpoint+"/opradesign/product"+idProduct, requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        setRecharge(!recharge)
+      })
+      .catch(error => console.log('error', error));
+  }
+  const handleDeleteClick = () =>{
+    var requestOptions = {
+      method: 'DELETE',
+      redirect: 'follow'
+    };
+    
+    fetch("http://localhost:8083/opradesign/product/"+idProduct, requestOptions)
+      .then(response => {
+        if(response.status === 200){
+          setOpenAlert(true)
+          setMessage('Producto eliminado con éxito')
+          setType('success')
+          setRecharge(!recharge)
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
+  const handleAsignCategory = (event) =>{
+    
+    setCategoriaValue(event.target.value)
+    
+  }
   const handleClick = () => {
-    console.log(producto.title);
+    console.log(producto);
     setImage(producto.image)
-    setReferenciaValue(producto.title)
-    setCantidadValue(producto.rating.count)
+    setReferenciaValue(producto.name)
+    setCantidadValue(producto.stock)
     setDescripccionValue(producto.description)
-    setCostoValue(producto.price)
+    setCostoValue(producto.salesPrice)
+    setCategoriaValue(producto.category.id);
     setOpenModal(true)
+    setIdProduct(producto.id);
 
   }
   // Función para actualizar la imagen al seleccionar un archivo
@@ -195,6 +257,8 @@ const styleFieldsModalMobile = {
     setDescripccionValue("")
     setOpenModal(false);
     setImage(""); 
+    setCategoriaValue(0);
+    setIdProduct(0);
   }
 
   const validationFields = (event) =>{
@@ -218,20 +282,7 @@ const styleFieldsModalMobile = {
         break;
     }
   }
-  const categorias = [
-    {
-      value: 'Masculino',
-      label: 'Masculino',
-    },
-    {
-      value: 'Femenino',
-      label: 'Femenino',
-    },
-    {
-      value: 'Unisex',
-      label: 'Unisex'
-    }
-  ];
+  
   return (
     //Esta clase retorna la card de los productos la cual es un componente que utiliza en companies que es productos
     <Card 
@@ -239,6 +290,12 @@ const styleFieldsModalMobile = {
       Width: 300,
       height: 600
      }}>
+      <AlertMessage
+      open={openAlert}
+      setOpen={setOpenAlert}
+      type={type}
+      message={message}
+            />
          <ModalUtility 
                 openModal={openModal}
                 setOpenModal={setOpenModal}
@@ -251,7 +308,7 @@ const styleFieldsModalMobile = {
                   borderRadius: 1
                 }}> 
                   <Box
-                  sx={props.screenWidth > 800 ? styleTitleModal: styleTitleModalMobile}>
+                  sx={props.screenWidth > 800 ? stylenameModal: stylenameModalMobile}>
                       <Typography
                       sx={{
                         height: '100%',
@@ -368,14 +425,15 @@ const styleFieldsModalMobile = {
                                 id="CategoriaList"
                                 select
                                 label="Categoría*"
-                                defaultValue="Masculino"
+                                defaultValue={categoriaValue}
+                                onChange={handleAsignCategory}
                                 // helperText="Por favor selecione una categoría"
                                 sx={{ width: '49%'}}  
                               >
                                 {categorias.map((option) => (
-                                  <MenuItem key={option.value}
-                                   value={option.value}>
-                                    {option.label}
+                                  <MenuItem key={option.id}
+                                   value={option.id}>
+                                    {option.nameCategory}
                                   </MenuItem>
                                 ))}
                               </TextField>
@@ -436,6 +494,11 @@ const styleFieldsModalMobile = {
                       height: '80%',
                       // backgroundColor: 'blue',
                     }}>
+                      <Box
+                      sx={{
+                        // backgroundColor: 'red',
+                        width: '85%'
+                      }}>
                         <LoadingButton
                             onClick={handleClickSaveButton}
                             loading={loading}
@@ -449,6 +512,17 @@ const styleFieldsModalMobile = {
                           >
                             <span>Guardar</span>
                           </LoadingButton>
+
+                      </Box>
+                             <Button variant="Text"
+                             onClick={handleDeleteClick} >
+                          <DeleteIcon
+                          sx={{
+                            "&:hover": {
+                              color: 'red'
+                            }
+                          }}/>
+                          </Button>
                     </Box>
                   </Box>
                 </Box>
@@ -471,7 +545,7 @@ const styleFieldsModalMobile = {
             sx={{
               height: '60px'
             }}>              
-            {producto.title.substring(0,28)}
+            {producto.name.substring(0,28)}
           </Typography>
           <Typography 
             variant="body2" 
@@ -493,7 +567,7 @@ const styleFieldsModalMobile = {
                 }}>
                 Cantidad: <br/>
                 <Typography>
-                {producto.rating.count} Und
+                {producto.stock} Und
                 </Typography>
               </Typography>
               <Typography
@@ -502,7 +576,7 @@ const styleFieldsModalMobile = {
                 }}>
                 Precio: <br/>
                 <Typography>
-                ${producto.price}
+                ${producto.salesPrice}
                 </Typography>
               </Typography>
           </Box>

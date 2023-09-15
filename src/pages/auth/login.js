@@ -35,6 +35,11 @@ const Page = () => {
   const [image, setimage] = useState(1);
   const endpoint = useContext(ApiContext);
 
+  
+  function validateEmail(email) {
+    const expresionRegular = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return expresionRegular.test(email);
+  }
   const [notificationData, setNotificationData] = useState({
     error: error,
     typeError: "",
@@ -88,7 +93,6 @@ const Page = () => {
         return response.json();
       })
       .then(data => {
-        console.log(data);
         setData(data);
         setLoadingData(true)
       })
@@ -173,6 +177,7 @@ const Page = () => {
                   <TextField
                     error={!!(formik.touched.email && formik.errors.email)}
                     fullWidth
+                    validate={validateEmail}
                     helperText={formik.touched.email && formik.errors.email}
                     label="Correo electrónico"
                     name="email"

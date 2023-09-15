@@ -168,6 +168,32 @@ const Page = () => {
   const anchorRef = useRef(null);
   const endpoint = useContext(ApiContext);
 
+  const fieldsToPost = [
+    {
+      fieldName: "avatar"
+    }, 
+    {
+      fieldName: "name"
+    }, 
+    {
+      fieldName: "email"
+    }, 
+    {
+      fieldName: "idRol"
+    }, 
+    {
+      fieldName: "contrasena"
+    }, 
+    {
+      fieldName: "documento"
+    }, 
+    {
+      fieldName: "direccion"
+    }, 
+    {
+      fieldName: "numeroTelefonico"
+    }
+  ]
   const [dataForm, setDataForm] = useState({
     name: "",
     email: "",
@@ -188,12 +214,18 @@ const Page = () => {
     address: ""
   })
   const [dataFormEdit, setDataFormEdit] = useState({
+    id: 0,
+    active: false,
     name: "",
     email: "",
+    profileImage: "",
+    rol: "",
+    address: "",
     documento: "",
     username: "",
     telefono: "",
     password: "",
+    //Manejador de errores
     errorTelefono: false,
     errorDocumento: false,
     errorNombre: false,
@@ -201,10 +233,7 @@ const Page = () => {
     errorPassword: false,
     errorEmail: false,
     errorAddress: false,
-    launchError: true,
-    profileImage: "",
-    rol: "",
-    address: ""
+    launchError: false,
   })
   const clearFields = () => {
     setDataForm({
@@ -229,6 +258,8 @@ const Page = () => {
     })
     setDataFormEdit({
       ...dataFormEdit,
+      id: 0,
+      active: false,
       username: "",
       name: "",
       email: "",
@@ -242,7 +273,7 @@ const Page = () => {
       errorEmail: false,
       errorPassword: false,
       errorAddress: false,
-      launchError: true,
+      launchError: false,
       profileImage: "",
       rol: "",
       address: ""
@@ -317,8 +348,11 @@ const Page = () => {
         password: item.password,
         telefono: item.phoneNumber,
         profileImage: item.avatar,
-        rol: item.rol.nombre,
-        address: item.address
+        rol: item.rol.idRol,
+        address: item.address,
+        id: item.idEmployee,
+        notificationEmail: item.notificationsEmail,
+        active: item.active
       })
     });
   }, [dataModalEdit])
@@ -352,19 +386,36 @@ const Page = () => {
     const expresionRegular = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return expresionRegular.test(email);
   }
-  const handleClick = () => {
+  function handleClick(type){
 
-    if (dataForm?.launchError || dataForm?.errorDocumento || dataForm?.errorTelefono || dataForm?.errorNombre || dataForm?.errorUsername || dataForm?.errorPassword || dataForm?.errorAddress) {
-      setOpenError(true);
-      setTypeError('error');
-      setMessageError('Complete los campos obligatorios o realice las correcciones necesarias')
-      // setLaunchError(true)
-      setDataForm({ ...dataForm, launchError: true })
+    if (type === 'Create') {
+      if (dataForm?.launchError || dataForm?.errorDocumento || dataForm?.errorTelefono || dataForm?.errorNombre || dataForm?.errorPassword || dataForm?.errorAddress) {
+        setOpenError(true);
+        setTypeError('error');
+        setMessageError('Complete los campos obligatorios o realice las correcciones necesarias')
+        // setLaunchError(true)
+        setDataForm({ ...dataForm, launchError: true })
+  
+      } else {
+        setLoading(true);
+        submitUserAccount();
+      }
 
-    } else {
-      setLoading(true);
-      submitUserAccount();
     }
+    if(type === 'Edit'){
+      // console.log('Estás editando')
+      // console.log(dataFormEdit)
+      if(dataFormEdit?.errorDocumento || dataFormEdit?.errorTelefono || dataFormEdit?.errorNombre  || dataFormEdit?.errorPassword || dataFormEdit?.errorAddress){
+        setOpenError(true);
+        setTypeError('error');
+        setMessageError('Complete los campos obligatorios o realice las correcciones necesarias')
+      }else{
+        setLoading(true);
+        submitUserAccountEdit();
+
+      }
+    }
+    
   }
   const errorFieldsValidation = (event) => {
     //Función que realiza la validación de que los campos esten llenos y el que no lo señala para modificacion y no permite darle click a guardar con el booleano launchError
@@ -389,19 +440,6 @@ const Page = () => {
           })
         } else {
           setDataForm({ ...dataForm, launchError: true })
-        }
-        break;
-      case 'username':
-        //Hay que validar si el name de usuario existe para poder añadirse y poder cambiar la variable launchError 
-        if (event.target.value.length < 1) {
-          setDataForm({
-            ...dataForm,
-            errorUsername: true,
-            launchError: true
-          })
-
-        } else {
-          setDataForm({ ...dataForm, launchError: false })
         }
         break;
       case 'telefono':
@@ -496,7 +534,7 @@ const Page = () => {
             errorNombre: true
           })
         } else {
-          setDataFormEdit({ ...dataFormEdit, launchError: true })
+          // setDataFormEdit({ ...dataFormEdit, launchError: true })
         }
         break;
       case 'documento':
@@ -507,7 +545,7 @@ const Page = () => {
             errorDocumento: true
           })
         } else {
-          setDataFormEdit({ ...dataFormEdit, launchError: true })
+          setDataFormEdit({ ...dataFormEdit, launchError: false })
         }
         break;
       case 'username':
@@ -800,10 +838,64 @@ const Page = () => {
         setMessageError('Ocurrió un error: ' + error)
       });
   }
+  const submitUserAccountEdit = () =>{
+     let myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+          "avatar": dataFormEdit?.profileImage,
+          "username": dataFormEdit?.username,
+          "name": dataFormEdit?.name,
+          "idRol": Number(dataFormEdit?.rol),
+          "email": dataFormEdit?.email,
+          "document": dataFormEdit?.documento,
+          "address": dataFormEdit?.address,
+          "phoneNumber": dataFormEdit?.telefono,
+          "active": dataFormEdit?.active,
+          "notificationsEmail": dataFormEdit?.notificationEmail
+        });
+        // console.log(raw)
+    var requestOptions = {
+          method: 'PUT',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
+        };
+
+    let statusCode = 0;
+    fetch(endpoint + "/opradesign/employee/"+dataFormEdit?.id, requestOptions)
+      .then(response => {
+        // console.log(response.status)
+        statusCode = response.status;
+        setLoading(false);
+        if (statusCode == 200) {
+          setOpenModal(false)
+          setOpenError(true);
+          setTypeError('success');
+          setMessageError('Se actualizó el usuario ' + dataFormEdit?.name + ' con éxito');
+          clearFields();
+          setRecharge(!recharge)
+        } else {
+          setOpenError(true);
+          setTypeError('error');
+          setMessageError('No se puede crear el usuario debido a la siguiente excepción ' + result.nombreExcepcion + ': ' + result.mensaje);
+        }
+      })
+      .catch(error => {
+        // console.log(error)
+        setLoading(false);
+        setOpenError(true);
+        setTypeError('error');
+        setMessageError('Ocurrió un error: ' + error)
+      });
+
+  }
+
   const usersWithOutImage = data.map == null?'':data.map(user => {
     const { contrasena, avatar, rol, ...rest } = user;
     return { ...rest, rol: rol.nombre };
   });
+
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -857,7 +949,11 @@ const Page = () => {
                   direction="row"
                   spacing={1}
                 >
-                  <ImportFromExcel/>
+                  <ImportFromExcel
+                  fieldsToPost={fieldsToPost}
+                  sObject={"/opradesign/employee" }
+                  objectMessage={'Empleados'}
+                  />
                   {/* <Button
                     color="inherit"
                     startIcon={(
@@ -992,16 +1088,14 @@ const Page = () => {
                             }}
                           />
                           <TextField
-                            label="username*"
+                            label="username"
                             value={dataForm?.username}
-                            error={dataForm?.errorUsername}
-                            helperText={dataForm?.errorUsername ? "Campo obligatorio" : ''}
-                            onChange={validationFields}
-                            onBlur={errorFieldsValidation}
+                            helperText={"El username se autocalcula del correo"}
                             id="username"
                             sx={{ width: '49%' }}
                             InputProps={{
                               startAdornment: <InputAdornment position="start">@</InputAdornment>,
+                              readOnly: true
                             }}
                           />
                         </Box>
@@ -1167,7 +1261,7 @@ const Page = () => {
                           height: '80%'
                         }}>
                         <LoadingButton
-                          onClick={handleClick}
+                          onClick={()=>{handleClick('Create')}}
                           loading={loading}
                           loadingPosition="start"
                           startIcon={<SaveIcon />}
@@ -1309,14 +1403,14 @@ const Page = () => {
                           <TextField
                             label="username*"
                             value={dataFormEdit?.username}
-                            error={dataFormEdit?.errorUsername}
-                            helperText={dataFormEdit?.errorUsername ? "Campo obligatorio" : ''}
+                            helperText={"El username se autocalcula del correo"}
                             onChange={validationFieldsEdit}
                             onBlur={errorFieldsValidationEdit}
                             id="username"
                             sx={{ width: '49%' }}
                             InputProps={{
                               startAdornment: <InputAdornment position="start">@</InputAdornment>,
+                              readOnly: true
                             }}
                           />
                         </Box>
@@ -1381,9 +1475,9 @@ const Page = () => {
                           />
                           <FormControl variant="filled"
                             sx={{ width: '49%' }}>
-                            <InputLabel id="rolInput">Rol</InputLabel>
+                            <InputLabel id="rolInput2">Rol</InputLabel>
                             <Select
-                              labelId="rolInput"
+                              labelId="rolInput2"
                               id="rol"
                               value={dataFormEdit?.rol}
                               onChange={handleClickChangeRol}
@@ -1482,7 +1576,7 @@ const Page = () => {
                           height: '80%'
                         }}>
                         <LoadingButton
-                          onClick={handleClick}
+                          onClick={()=>{handleClick('Edit')}}
                           loading={loading}
                           loadingPosition="start"
                           startIcon={<SaveIcon />}

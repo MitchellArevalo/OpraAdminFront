@@ -2,16 +2,28 @@ import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { Card, InputAdornment, OutlinedInput, SvgIcon } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-export const CompaniesSearch = ({productos, searching, setSearching, setEndpoint}) => {
+export const CompaniesSearch = (props) => {
 
+  const {productos, setProductSearch, setSearching, change, setChange } = props
+  const [inputValue, setInputValue] = useState("");
+  
   function searchProduct (event) {
-    console.log('productos:', productos);
-    console.log('Valor del evento:', event.target.value);
-    // const url = event.target.value;
-    const url = `https://fakestoreapi.com/products?limit=${event.target.value}`;
-    setSearching(!searching)
-    setEndpoint(url)
+    setInputValue(event.target.value);
+    setChange(!change)
+    if(event.target.value.length>0){
+      setSearching(true)      
+    }else{
+      setSearching(false);
+    }
+    
   };
+
+  useEffect(() => {
+  // console.log(filteredData);
+  setProductSearch(inputValue)
+  }, [change])
+ 
+  
 
   return(
   

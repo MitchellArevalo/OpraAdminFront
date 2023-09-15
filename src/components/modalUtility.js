@@ -1,4 +1,4 @@
-import React, { Children } from 'react';
+import React, { Children, useRef, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 // import Button from '@mui/material/Button';
@@ -8,6 +8,7 @@ function ModalUtility (props) {
 
     const {openModal, setOpenModal, styleModal, children} = props;
 
+    
     const handleClose = () => setOpenModal(false);
 
   return (

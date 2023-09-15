@@ -80,7 +80,7 @@ export default function CustomersTable(props) {
   const endpoint = useContext(ApiContext);
 
   function handleEditClick(user){
-    console.log(user);
+    // console.log(user);
     let arrayAsignment = []
     arrayAsignment.push(user)
     setDataModalEdit(arrayAsignment);

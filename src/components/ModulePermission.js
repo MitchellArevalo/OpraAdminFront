@@ -21,9 +21,17 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 const stylePapers = {
     width: '100%',
-    height: '20vh',
+    height: '30vh',
     margin: '3% 0',
-    padding: '4%'
+    display:'grid',
+    placeItems:'center',
+    padding: '8%'
+}
+const Styles = {
+    width: '48%',
+    padding: '2% 5%',
+    margin:'0 1%',
+    // backgroundColor:'red'
 }
 const modulosDisponibles = [
     {
@@ -50,7 +58,7 @@ const modulosDisponibles = [
 ]
 
 export default function ModulePermission(props) {
-    const { rolSelected, idRolSelected, checked, setChecked, loader, idModules, setRolSelected, setOpenAlert, setTypeAlert, setMessageAlert, setRechargeData, rechargeData, nameNewRole} = props    
+    const { rolSelected, idRolSelected, checked, setChecked, loader, idModules, setRolSelected, setOpenAlert, setTypeAlert, setMessageAlert, setRechargeData, rechargeData, nameNewRole, setOpenModal} = props    
     const [loading, setLoading] = useState(false);
     const [ idRolCreated, setIdRolCreated ] = useState(0)
     const endpoint = useContext(ApiContext);
@@ -242,13 +250,10 @@ export default function ModulePermission(props) {
                 setMessageAlert('Ocurrió un error al intentar crear el rol y generó la siguiente excepción: ' + error.nombreExcepcion + ': ' + error.mensaje);
               });      
         }
-        setLoading(false);
+
     }
     
-    const Styles = {
-        width: '40%',
-        padding: '2% 5%'
-    }
+   
     const IOSSwitch = styled((props) => (
           <Switch focusVisibleClassName=".Mui-focusVisible"
            disableRipple

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Head from 'next/head';
 import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
@@ -29,6 +29,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ExportToExcel from 'src/components/exportToExcel';
+import ImportFromExcel from 'src/components/importFromExcel';
+import { ApiContext } from 'src/contexts/Api-context';
 import { display, height } from '@mui/system';
 import { success } from 'src/theme/colors';
 
@@ -155,75 +157,131 @@ const styleFieldsModalMobile = {
 };
   
   const Page = () => {
+    
+    const endpoint = useContext(ApiContext);
     const [productos, setProductos] = useState([]);
+    const [data, setData] = useState([]);
     const [searching, setSearching] = useState(false);
-    const [endPoint, setEndpoint] = useState("");
+    const [productSearch, setProductSearch] = useState(false);
     const [openModal, setOpenModal] = useState(false);
-    const [loading, setLoading] = React.useState(false);
+    const [loading, setLoading] = useState(false);
     const [loadingProducts, setLoadingProducts] = useState(false);
     const [image, setImage] = useState(""); // Estado para almacenar la imagen cargada
     const [referenciaValue, setReferenciaValue] = useState("");
     const [cantidadValue, setCantidadValue] = useState("");
     const [descripccionValue, setDescripccionValue] = useState("");
     const [costoValue, setCostoValue] = useState("");
+    const [categoriaValue, setCategoriaValue] = useState(0);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);//Estado para el tamaño de la pantalla
     const [open, setOpen] = useState(false);
+    const [categorias, setCategorias] = useState([]);
+    const [change, setChange] = useState(false);
+    const [recharge, setRecharge]= useState(true)
   
+    const fieldsToPost = [
+      {
+        fieldName: "name"
+      }, 
+      {
+        fieldName: "idCategory"
+      }, 
+      {
+        fieldName: "itemCode"
+      }, 
+      {
+        fieldName: "size"
+      }, 
+      {
+        fieldName: "description"
+      }, 
+      {
+        fieldName: "image"
+      }
+      // "name": referenciaValue,
+      // "idCategory": categoriaValue,
+      // "itemCode": referenciaValue,
+      // "size": "S,M,L,XL,XXL",
+      // "description": descripccionValue,
+      // "image": image
+    ]
+    
     
     useEffect(() => {
 
-      if (searching) {
-        try {                      
-          fetch(endPoint)
-          .then(response => response.json())
-          .then(data => {
-            setProductos(data);
-          });
-        } catch (error) {
-          alert('Ocurrió un error al conectarse a la información, intentalo más tarde');
+      var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+      };
+      
+      fetch(endpoint + "/opradesign/category/", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+          setCategorias(result);
+        })
+        .catch(error => console.log('error', error));
+
+      var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+      };
+      
+      fetch(endpoint + "/opradesign/product/", requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          setData(data);
+          setProductos(data)
+          setLoadingProducts(true);
+        })
+        .catch(error => {
           console.log('Este fue el error al conectarse a la API', error);
-        }
+        });
+    }, [recharge])
+
+    useEffect(() => {
+      const handleWindowResize = () => {
+        setScreenWidth(window.innerWidth);
+        console.log(window.innerWidth);
+      };
+  
+      window.addEventListener('resize', handleWindowResize);
+  
+      return () => {
+        window.removeEventListener('resize', handleWindowResize)
+      };
+    }, [screenWidth])
+    
+    
+    useEffect(() => {
+      // console.log('ProductSearchValue:' + productSearch)
+      // console.log('length del search:' + productSearch.length);
+      // console.log(searching)
+      // console.log(productSearch)
+      if (!searching) {
+        // console.log('Entró al set de los productos')
+        setProductos(data)
       }else{
-          try {
-          fetch('https://fakestoreapi.com/products')
-            .then(response => response.json())
-            .then(data => {
-              setProductos(data);
-              setLoadingProducts(true);
-            });
-          } catch (error) {
-            alert('Ocurrió un error al conectarse a la información, intentalo más tarde');
-            console.log('Este fue el error al conectarse a la API', error);
-          }
-
-        }
-
-    const handleWindowResize = () => {
-      setScreenWidth(window.innerWidth);
-      console.log(window.innerWidth);
-    };
-
-    window.addEventListener('resize', handleWindowResize);
-
-    return () => {
-      window.removeEventListener('resize', handleWindowResize)
-    };
+        // console.log('Entró al set del filtro')
+        const filteredData = productos.filter((obj) => obj.name.toLowerCase().includes(productSearch.toLowerCase()));
+        
+        setProductos(filteredData)
+      }
+   
 
     
-  }, [searching, endPoint]);
+  }, [productSearch, change]);
 
   const handleOpen = () => setOpenModal(true);
   function handleClick() {
     setLoading(true);
     setTimeout(() => {
+      postProduct()
+      setSearching(!searching);
       setLoading(false);
       setOpenModal(false);
       setOpen(true)
     }, "3000");
   }
 
-  
-  // Función para actualizar la imagen al seleccionar un archivo
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       let reader = new FileReader();
@@ -264,21 +322,38 @@ const styleFieldsModalMobile = {
         break;
     }
   }
-  const categorias = [
-    {
-      value: 'Masculino',
-      label: 'Masculino',
-    },
-    {
-      value: 'Femenino',
-      label: 'Femenino',
-    },
-    {
-      value: 'Unisex',
-      label: 'Unisex'
-    }
-  ];
+  const handleAsignCategory = (event) =>{
+    
+    setCategoriaValue(event.target.value)
+    
+  }
+  const postProduct = () =>{
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
+    let raw = JSON.stringify({
+      "name": referenciaValue,
+      "idCategory": categoriaValue,
+      "itemCode": referenciaValue,
+      "size": "S,M,L,XL,XXL",
+      "description": descripccionValue,
+      "image": image
+    });
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch(endpoint+"/opradesign/product", requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        setRecharge(!recharge)
+      })
+      .catch(error => console.log('error', error));
+  }
   return(
   <>
     <Head>
@@ -309,16 +384,11 @@ const styleFieldsModalMobile = {
                 direction="row"
                 spacing={1}
               >
-                <Button
-                  color="inherit"
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <ArrowUpOnSquareIcon />
-                    </SvgIcon>
-                  )}
-                >
-                  Importar
-                </Button>
+                <ImportFromExcel
+                  fieldsToPost={fieldsToPost}
+                  sObject={"/opradesign/product"}
+                  objectMessage={'Empleados'}
+                  />
                 <ExportToExcel 
                   data={productos}
                   mainComponent={'Inventario'}/>
@@ -433,13 +503,15 @@ const styleFieldsModalMobile = {
                                 }}
                               />
                               <TextField
-                                label="Costo*"
+                                label="Costo"
                                 value={costoValue}
                                 onChange={validationFields}
                                 id="Costo"
+                                helperText="El costo se autocalcula de las entradas"
                                 sx={{ width: '49%'}}
                                 InputProps={{
                                   startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                                  readOnly: true,
                                 }}
                               />
                         </Box>
@@ -447,16 +519,18 @@ const styleFieldsModalMobile = {
                             
                               <TextField
                                  id="Cantidad"
-                                 label="Cantidad*"
+                                 label="Cantidad"
                                  value={cantidadValue}
                                  onChange={validationFields}
                                  type="number"
+                                 helperText="La cantidad se autocalcula de las entradas"
                                  InputLabelProps={{
                                    shrink: true,
                                  }}
                                 sx={{ width: '49%'}}
                                 InputProps={{
                                   startAdornment: <InputAdornment position="start">#</InputAdornment>,
+                                  readOnly: true,
                                 }}
                               />
                               <TextField
@@ -465,12 +539,13 @@ const styleFieldsModalMobile = {
                                 label="Categoría*"
                                 defaultValue="Masculino"
                                 // helperText="Por favor selecione una categoría"
+                                onChange={handleAsignCategory}
                                 sx={{ width: '49%'}}  
                               >
                                 {categorias.map((option) => (
-                                  <MenuItem key={option.value}
-                                   value={option.value}>
-                                    {option.label}
+                                  <MenuItem key={option.id}
+                                   value={option.id}>
+                                    {option.nameCategory}
                                   </MenuItem>
                                 ))}
                               </TextField>
@@ -560,9 +635,11 @@ const styleFieldsModalMobile = {
             />
           <CompaniesSearch 
           productos={productos}
-          searching={searching}
+          setProductSearch={setProductSearch}
           setSearching={setSearching}
-          setEndpoint={setEndpoint}
+          searching={searching}
+          setChange={setChange}
+          change={change}
           />
           <Grid
             container
@@ -625,22 +702,13 @@ const styleFieldsModalMobile = {
                 setScreenWidth={setScreenWidth}
                 setOpen = {setOpen}
                 open = {open}
+                categorias={categorias}
+                recharge={recharge}
+                setRecharge= {setRecharge}
                 />
               </Grid>
             ))}
           </Grid>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center'
-            }}
-          >
-            {loadingProducts != false?productos.length != 0? <Pagination
-              count={10}
-              size="Medium"
-            />:'':''}
-           
-          </Box>
         </Stack>
       </Container>
     </Box>

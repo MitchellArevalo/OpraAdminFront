@@ -27,55 +27,69 @@ import Button from '@mui/material/Button'
         setRechargeData(!rechargeData)
     }
 
-    function handleDeleteClick(idRol){
-      var requestOptions = {
-        method: 'GET',
-        redirect: 'follow'
-      };
-      
-      fetch(endpoint +"/opradesign/modulosrol/rol/"+idRol, requestOptions)
-        .then(response => response.json())
-        .then(result => {
-            console.log('Resultado:', result);
-            result.forEach(item => {
-              var myHeaders = new Headers();
-              myHeaders.append("Content-Type", "application/json");
-
-              var raw = JSON.stringify({
-                "idModulo": item.idModulo
-              });
-
-              var requestOptions = {
-                method: 'DELETE',
-                headers: myHeaders,
-                body: raw,
-                 redirect: 'follow'
-              };
-
-          fetch(endpoint + "/opradesign/modulosrol/rol/"+idRol, requestOptions)
-            .then(response => response.json())
-            .then(result => console.log('Rol eliminado con éxito' , result))
-            .catch(error => console.log('error', error));
-                      });
-        })
-        .catch(error => console.log('error', error));
+    async function fetchDeleteRol(idRol) {
 
       var requestOptions = {
         method: 'DELETE',
         redirect: 'follow'
       };
-      
-      fetch( endpoint + "/opradesign/rol/"+idRol, requestOptions)
-        .then(response => response.text())
-        .then(result => {
+      await fetch( endpoint + "/opradesign/rol/"+idRol, requestOptions)
+        .then(response => {
           setOpenAlert(true);
           setTypeAlert('success');
           setMessageAlert('Rol eliminado con éxito');
+          setRechargeData(!rechargeData)
         })
         .catch(error => console.log('error', error));
-        setRechargeData(!rechargeData)
-        setRolSelected('');
-        setIdRolSelected(0);
+    }
+
+    function handleDeleteClick(idRol){
+      var requestOptionsGet = {
+        method: 'GET',
+        redirect: 'follow'
+      };
+      
+      fetch(endpoint +"/opradesign/modulosrol/rol/"+idRol, requestOptionsGet)
+        .then(response => response.json())
+        .then(result => {
+            console.log('Resultado:', result);
+            result.forEach(item => {
+              console.log(idRol)
+              console.log(item.idModulo)
+              var headersDeleteRoleModule = new Headers();
+              headersDeleteRoleModule.append("Content-Type", "application/json");
+
+              var raw = JSON.stringify({
+                "idModulo": item.idModulo
+              });
+
+              var requestOptionsModuloRol = {
+                method: 'DELETE',
+                headers: headersDeleteRoleModule,
+                body: raw,
+                 redirect: 'follow'
+              };
+
+          fetch(endpoint + "/opradesign/modulosrol/rol/"+idRol, requestOptionsModuloRol)
+            .then(response => {
+              if(response.ok){
+                console.log('eliminada la relacion con exito')
+              }
+            })
+            .catch(error => {
+              console.log('Ocurrió un error:', error);
+            });
+          });
+        })
+        .catch(error => console.log('error', error));
+
+        setTimeout(() => {
+          console.log('Han pasado 3 segundos');
+          fetchDeleteRol(idRol)
+          setRechargeData(!rechargeData)
+          setRolSelected('');
+          setIdRolSelected(0);
+        }, 500);
     }
 
     function assignIdRol(id){
@@ -91,7 +105,7 @@ import Button from '@mui/material/Button'
         bgcolor: 'background.paper',
         position: 'relative',
         overflow: 'auto',
-        maxHeight: 300,
+        maxHeight: '60vh',
         '& ul': { padding: 0 },
       }}
       subheader={<li />}

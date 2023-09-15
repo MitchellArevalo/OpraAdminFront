@@ -45,7 +45,7 @@ export const AuthGuard = (props) => {
         default:
           break;
       }
-      let permiso = permissions.filter(permise => permise.name.toLowerCase() === pathFormat);
+      let permiso = permissions === null?'': permissions.filter(permise => permise.name.toLowerCase() === pathFormat);
       permiso.map((per, index) => {
         console.log('valor del view: ' + per.view);
         authRole = per.view;

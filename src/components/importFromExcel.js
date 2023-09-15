@@ -38,8 +38,12 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-const ImportFromExcel = () => {
+const ImportFromExcel = (props) => {
   const endpoint = useContext(ApiContext);
+  
+  const {fieldsToPost, sObject, objectMessage} = props;
+  
+  //"/opradesign/employee"  sObject donde se va a actualizar
   const [importing, setImporting] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -79,18 +83,16 @@ const ImportFromExcel = () => {
         let arrayLength = jsonData.length;
         let iteratedIndex = 1;
       for (let index = 0; index < jsonData.length; index++) {
-        await fetch(endpoint + "/opradesign/employee", {
+        let raw = {};
+        fieldsToPost.forEach(element => {
+          raw[element.fieldName] = jsonData[index][element.fieldName];
+        });
+
+        let bodyJson = JSON.stringify(raw);
+        
+        await fetch(endpoint + sObject, {
           method: "POST",
-          body: JSON.stringify({
-            avatar: jsonData[index].avatar,
-            name: jsonData[index].name,
-            email: jsonData[index].email,
-            contrasena: jsonData[index].contrasena,
-            documento: jsonData[index].documento,
-            direccion: jsonData[index].direccion,
-            numeroTelefonico: jsonData[index].numeroTelefonico,
-            idRol: parseInt(jsonData[index].idRol),
-          }),
+          body: bodyJson,
           headers: {
             "Content-type": "application/json; charset=UTF-8",
           },
@@ -106,15 +108,6 @@ const ImportFromExcel = () => {
             console.log(err.message);
           });
       }
-      // setTimeout(() => {
-      //     fetch("http://localhost:3002/api/v1/products")
-      //         .then((response) => response.json())
-      //         .then((data) => {
-      //             setProductsName(data);
-      //         });
-      //         setImportOpen(false);
-      //         setImporting(false);
-      // }, 2000);
     } else {
       alert("Debe llenar las columnas obligatorias");
       setImporting(false);
@@ -203,7 +196,7 @@ const ImportFromExcel = () => {
                     <Typography 
                      variant="h5"
                      color="initial">
-                        Usuarios importados con éxito
+                        {objectMessage} importados con éxito
                     </Typography>
                     <Button
                     variant="text"
