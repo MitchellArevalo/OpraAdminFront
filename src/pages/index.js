@@ -1,3 +1,4 @@
+import React, {useEffect, useState, useContext} from 'react';
 import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
 import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
@@ -10,10 +11,54 @@ import { OverviewTasksProgress } from 'src/sections/overview/overview-tasks-prog
 import { OverviewTotalCustomers } from 'src/sections/overview/overview-total-customers';
 import { OverviewTotalProfit } from 'src/sections/overview/overview-total-profit';
 import { OverviewTraffic } from 'src/sections/overview/overview-traffic'; //Grafico trafico
+import { ApiContext } from 'src/contexts/Api-context';
 
 const now = new Date();
 
-const Page = () => (
+const Page = () => {
+  
+  const endpoint = useContext(ApiContext);
+  const [dataClientes, setDataClientes] = useState([]);
+  const [ventasTotales,setVentasTotales] = useState([])
+  const [porcentajeDeVenta,setporcentajeDeVenta] = useState([])
+
+
+  useEffect(() => {   
+    
+    fetch(endpoint+"/opradesign/client")
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        setDataClientes(data);
+      })
+      .catch(error => {
+        // Manejar el error
+        console.error('Error:', error);
+      });
+
+      var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+      };
+      
+      fetch("http://localhost:8083/opradesign/sale", requestOptions)
+        .then(response => response.json())
+        .then(dataVentas => {
+          let meta = 100000;
+          let conteoValueVentas = 0;
+          let profitTotal = 0;
+          dataVentas.forEach(venta => {
+            conteoValueVentas += venta.valorVenta;
+            profitTotal += venta.profitVenta;
+          });
+          ((conteoValueVentas / meta) * 100)
+          setVentasTotales
+        })
+        .catch(error => console.log('error', error));
+    
+  }, []);
+  return(
   <>
     <Head>
       <title>
@@ -53,7 +98,7 @@ const Page = () => (
               difference={16}
               positive={false}
               sx={{ height: '100%' }}
-              value="1.6k"
+              value={dataClientes.length.toString()}
             />
           </Grid>
           <Grid
@@ -217,7 +262,7 @@ const Page = () => (
       </Container>
     </Box>
   </>
-);
+)};
 
 Page.getLayout = (page) => (
   <DashboardLayout>

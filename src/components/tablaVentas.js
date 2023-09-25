@@ -9,40 +9,50 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import {Box, Typography} from '@mui/material';
 
+function formatPhoneNumber(phoneNumber) {
+  const cleaned = ('' + phoneNumber).replace(/\D/g, '');
+  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+
+  if (match) {
+    return '(' + match[1] + ') ' + match[2] + '-' + match[3];
+  }
+
+  return null;
+}
   const columns = [
     { 
-        id: 'Producto', 
-        label: 'Producto',
+        id: 'cliente.nombre', 
+        label: 'Cliente',
         minWidth: 170 ,
         align: 'center'
     },
     {
-      id: 'quantityProduct',
-      label: 'Cantidad',
+      id: 'valorVenta',
+      label: 'Monto',
+      minWidth: 150,
+      align: 'center',
+    },
+    {
+      id: 'profitVenta',
+      label: 'Ganancia',
       minWidth: 170,
       align: 'center',
     },
     {
-        id: 'description',
-        label: 'Comentarios',
+        id: 'fechaVenta',
+        label: 'Fecha',
         minWidth: 170,
         align: 'center',
     },
     {
-      id: 'Employee',
-      label: 'Ingresado por',
-      minWidth: 170,
-      align: 'center',
-    },
-    {
-      id: 'dateOutput',
-      label: 'Fecha de ingreso',
+      id: 'estadoVenta',
+      label: 'Estado',
       minWidth: 170,
       align: 'center',
     }
   ];
   
-  export default function SalidasTable(props) {
+  export default function TablaVentas(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
   
@@ -50,11 +60,6 @@ import {Box, Typography} from '@mui/material';
       setPage(newPage);
     };
   
-    var formatter = new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP'
-    });
-    
     const handleChangeRowsPerPage = (event) => {
       setRowsPerPage(+event.target.value);
       setPage(0);
@@ -90,7 +95,7 @@ import {Box, Typography} from '@mui/material';
             sx={{ mb: 3 }}
             variant="h5"
           >
-           Lo sentimos, no se han encontrado salidas con sus criterios de busqueda
+           Lo sentimos, no se han encontrado ventas con sus criterios de busqueda
           </Typography>
       </Box>
           :
@@ -118,15 +123,15 @@ import {Box, Typography} from '@mui/material';
                          align = {'center'}
                          >
                                 <TableCell
-                                align='center'>{data.product.name}</TableCell>
+                                align='center'>{data.cliente.nombre}</TableCell>
                                 <TableCell
-                                align='center'>{data.quantityProduct}</TableCell>
+                                align='center'>{data.valorVenta}</TableCell>
                                 <TableCell
-                                align='center'>{data.description}</TableCell>
+                                align='center'>{data.profitVenta}</TableCell>
                                 <TableCell
-                                align='center'>{data.employee.username}</TableCell>
+                                align='center'>{data.fechaVenta}</TableCell>
                                 <TableCell
-                                align='center'>{data.dateOutput}</TableCell>
+                                align='center'>{data.estadoVenta}</TableCell>
                          </TableRow>
                     ))
                     }

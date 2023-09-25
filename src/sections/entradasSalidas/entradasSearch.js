@@ -5,7 +5,7 @@ import { Card, InputAdornment, OutlinedInput, SvgIcon } from '@mui/material';
 
 const EntradasSearch = (props) => {
 
-    const { dataEntries , setFilteredDataUsers, setBusquedaFallida} = props;
+    const { dataEntries , setFilteredDataEntries, setBusquedaFallida} = props;
 
     const [inputValue, setInputValue] = useState("");
     const [change, setChange] = useState(false);
@@ -25,8 +25,7 @@ const EntradasSearch = (props) => {
     );
 
     useEffect(() => {
-    console.log(filteredData);
-    setFilteredDataUsers(filteredData)
+    setFilteredDataEntries(filteredData)
     }, [change])
 
     return (
@@ -34,7 +33,7 @@ const EntradasSearch = (props) => {
           <OutlinedInput
             defaultValue=""
             fullWidth
-            placeholder="Busca un cliente"
+            placeholder="Busca una entrada"
             onChange={searchChange}
             startAdornment={(
               <InputAdornment position="start">

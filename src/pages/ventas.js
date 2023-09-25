@@ -1,11 +1,33 @@
 import Head from 'next/head';
+import React, {useState, useEffect, useContext} from 'react';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { Box, Button, Container, Stack, SvgIcon, TextField, Typography, FormControl, InputAdornment, MenuItem, Divider } from '@mui/material';
 import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import ExportToExcel from 'src/components/exportToExcel';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
+import TablaVentas from 'src/components/tablaVentas';
 
 const Page = () => {
+
+  
+  const [busquedaFallida, setBusquedaFallida]= useState(false);
+  const [dataSales, setDataSales]= useState([]);
+
+  useEffect(() => {
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+    
+    fetch("http://localhost:8083/opradesign/sale", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        setDataSales(result);
+      })
+      .catch(error => console.log('error', error));
+  }, [])
+  
+
   return (
 
     <>
@@ -37,7 +59,7 @@ const Page = () => {
                 direction="row"
                 spacing={1}
               >
-                <Button
+                {/* <Button
                   color="inherit"
                   startIcon={(
                     <SvgIcon fontSize="small">
@@ -46,16 +68,16 @@ const Page = () => {
                   )}
                 >
                   Importar
-                </Button>
-                <ExportToExcel 
+                </Button> */}
+                {/* <ExportToExcel 
                 // data={data}
                 // mainComponent={'Clientes'}
                 // allow ={data.length > 0?true:false}
-                />
+                /> */}
               </Stack>
             </Stack>
             <div>
-              <Button
+              {/* <Button
                 startIcon={(
                   <SvgIcon fontSize="small">
                     <PlusIcon />
@@ -64,10 +86,17 @@ const Page = () => {
                 variant="contained"
               >
                 Agregar
-              </Button>
+              </Button> */}
             </div>
           </Stack>
-          {/* Parte interna del componente */}
+          <Box>
+            <Box>
+                  <TablaVentas
+                  data={dataSales}
+                  busquedaFallida={busquedaFallida}
+                  />
+            </Box>
+          </Box>
           <Box
             sx={{
               // backgroundColor: 'red',

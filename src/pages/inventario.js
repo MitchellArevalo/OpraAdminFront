@@ -327,6 +327,10 @@ const styleFieldsModalMobile = {
     setCategoriaValue(event.target.value)
     
   }
+  const productWithOutImage = data.map == null?'':data.map(user => {
+    const { image, category, ...rest } = user;
+    return { ...rest, category: category.nameCategory };
+  });
   const postProduct = () =>{
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -387,11 +391,12 @@ const styleFieldsModalMobile = {
                 <ImportFromExcel
                   fieldsToPost={fieldsToPost}
                   sObject={"/opradesign/product"}
-                  objectMessage={'Empleados'}
+                  objectMessage={'Productos '}
                   />
                 <ExportToExcel 
-                  data={productos}
-                  mainComponent={'Inventario'}/>
+                  data={productWithOutImage}
+                  mainComponent={'Inventario'}
+                  allow={true}/>
               </Stack>
             </Stack>
             <div>

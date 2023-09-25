@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Box, Button, Container, Stack, SvgIcon, TextField, Typography, FormControl, InputAdornment, MenuItem, Divider } from '@mui/material';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
@@ -9,46 +9,17 @@ import ClientsTable from 'src/sections/ClientAccount/clientsTable';
 import CircularProgress from '@mui/material/CircularProgress';
 import ClientsSearch from 'src/sections/ClientAccount/clients-search';
 import ExportToExcel from 'src/components/exportToExcel';
+import { ApiContext } from 'src/contexts/Api-context';
 
 const Page = () => {
+  const endpoint = useContext(ApiContext);
   const [data, setData] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [filteredDataUsers, setFilteredDataUsers] = useState([]);
   const [busquedaFallida, setBusquedaFallida] = useState(false);
   const [recharge, setRecharge] = useState(false);
 
-
-  const clientsMocked = [
-    {
-      nombre: "Cliente mockeado",
-      email: "mockedClient@mail.com",
-      documento: "3214568979",
-      direccion: "carrera 1 # 1-1",
-      numeroTelefonico: "3115266544",
-      username: "pruebaPostman@opra.com",
-      contrasena: "opracliente"
-    },
-    {
-      nombre: "Cliente mockeado",
-      email: "mockedClient@mail.com",
-      documento: "3214568979",
-      direccion: "carrera 1 # 1-1",
-      numeroTelefonico: "3115266544",
-      username: "pruebaPostman@opra.com",
-      contrasena: "opracliente"
-    },
-    {
-      nombre: "Cliente mockeado",
-      email: "mockedClient@mail.com",
-      documento: "3214568979",
-      direccion: "carrera 1 # 1-1",
-      numeroTelefonico: "3115266544",
-      username: "pruebaPostman@opra.com",
-      contrasena: "opracliente"
-    }
-  ]
-
-  const clientsWithoutPasswords = clientsMocked.map(client => {
+  const clientsWithoutPasswords = data.map(client => {
     const { contrasena, ...rest } = client; // Destructura el objeto y excluye 'contrasena'
     return rest; // Retorna el objeto sin 'contrasena'
   });
@@ -57,28 +28,26 @@ const Page = () => {
     setLoadingUsers(false)
     //SE ECUENTRA COMENTADO PORQUE AUNNO EXISTE EL ENDPOINT PARA REALIZAR EL GET DIRECTAMENTE A LA BASE DE DATOS
     
-    // fetch('https://backendopra.onrender.com/opradesign/persona')
-    //   .then(response => {
-    //     return response.json();
-    //   })
-    //   .then(data => {
-    //     setData(data);
-    //     setLoadingUsers(true)
-    //     // console.log(data);
-    //   })
-    //   .catch(error => {
-    //     // Manejar el error
-    //     console.error('Error:', error);
-    //     setOpenError(true);
-    //     setTypeError('error');
-    //     setMessageError('Ocurrió un error inesperado, consulte con su administrador')
-    //   });
-    setTimeout(() => {
-      setData(clientsWithoutPasswords);
-      setLoadingUsers(true);
-    }, 3000);
-
+    
+    fetch(endpoint+"/opradesign/client")
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        setData(data);
+        setLoadingUsers(true)
+        // console.log(data);
+      })
+      .catch(error => {
+        // Manejar el error
+        console.error('Error:', error);
+        setOpenError(true);
+        setTypeError('error');
+        setMessageError('Ocurrió un error inesperado, consulte con su administrador')
+      });
+    
   }, [recharge]);
+  
   return (
 
     <>

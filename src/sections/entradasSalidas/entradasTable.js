@@ -96,7 +96,7 @@ import {Box, Typography} from '@mui/material';
             sx={{ mb: 3 }}
             variant="h5"
           >
-           Lo sentimos, no se han encontrado usuarios con sus criterios de busqueda
+           Lo sentimos, no se han encontrado entradas con sus criterios de busqueda
           </Typography>
       </Box>
           :
