@@ -123,11 +123,12 @@ export const AuthProvider = (props) => {
     []
   );
   
-  const signIn = async (email, password, data) => {
+  const signIn = async (email, password, data, endpoint) => {
     
     const filteredData = data.filter((item) =>
     item.email.toLowerCase().includes(email.toLowerCase()) 
     );
+    
     console.log('data filtrada: ',filteredData)
     if(filteredData.length < 1){
       throw new Error('Verifique su correo y contraseña por favor');
@@ -135,48 +136,69 @@ export const AuthProvider = (props) => {
     if (password !== filteredData[0].password || email !== filteredData[0].email ) {
       throw new Error('Verifique su correo y contraseña por favor');
     }
-    // if (password !== filteredData[0].contrasena ) {
-    //   throw new Error('Contraseña incorrecta');
-    // }
-    // if (email !== 'Admin@Opra.com' || password !== '123') {
-    //   throw new Error('Verifica tu usuario y contraseña');
-    // }
+    let statusCode = 0;
+    fetch( endpoint + '/opradesign/modulosrol/rol/' + filteredData[0].rol.idRol)
+      .then(response => {
+        statusCode = response.status;
+        return response.json();
+      })
+      .then(data => {
+        if (statusCode === 200) {
+          const modulesStorage = data.map(objeto => {
+            return {
+              name: objeto.name,
+              edit: objeto.edit,
+              view: objeto.view,
+              create: objeto.create,
+              delete: objeto.delete
+            };
+          });
+          sessionStorage.setItem('permissionSet', JSON.stringify(modulesStorage));
 
-
-    try {
-      window.sessionStorage.setItem('authenticated', 'true');
+          try {
+            window.sessionStorage.setItem('authenticated', 'true');
+            
+          } catch (err) {
+            console.error(err);
+          }
+          const passwordEncrypted = CryptoJS.AES.encrypt(filteredData[0].password, 'secretPassword').toString();
       
-    } catch (err) {
-      console.error(err);
-    }
-    const passwordEncrypted = CryptoJS.AES.encrypt(filteredData[0].password, 'secretPassword').toString();
-
-    const user = {
-      idEmployee: filteredData[0].idEmployee,
-      avatar: filteredData[0].avatar,
-      username: filteredData[0].username,
-      document: filteredData[0].document,
-      name: filteredData[0].name,
-      email: filteredData[0].email,
-      phoneNumber: filteredData[0].phoneNumber,
-      notificationsEmail: filteredData[0].notificationsEmail,
-      rol: {
-        idRol: filteredData[0].rol.idRol,
-        nombre: filteredData[0].rol.nombre
-      }
-    };
-
-    window.sessionStorage.setItem('userData', JSON.stringify(user));
-    // window.sessionStorage.setItem('passwordEncrypted', passwordEncrypted);
-
-    // Otra opción es almacenar la contraseña encriptada dentro del objeto `user` con una propiedad separada
-    user.password = passwordEncrypted;
-    window.sessionStorage.setItem('userData', JSON.stringify(user));
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
+          const user = {
+            idEmployee: filteredData[0].idEmployee,
+            avatar: filteredData[0].avatar,
+            username: filteredData[0].username,
+            document: filteredData[0].document,
+            name: filteredData[0].name,
+            email: filteredData[0].email,
+            phoneNumber: filteredData[0].phoneNumber,
+            notificationsEmail: filteredData[0].notificationsEmail,
+            rol: {
+              idRol: filteredData[0].rol.idRol,
+              nombre: filteredData[0].rol.nombre
+            }
+          };
+      
+          window.sessionStorage.setItem('userData', JSON.stringify(user));
+          // window.sessionStorage.setItem('passwordEncrypted', passwordEncrypted);
+      
+          // Otra opción es almacenar la contraseña encriptada dentro del objeto `user` con una propiedad separada
+          user.password = passwordEncrypted;
+          window.sessionStorage.setItem('userData', JSON.stringify(user));
+      
+          dispatch({
+            type: HANDLERS.SIGN_IN,
+            payload: user
+          });
+          
+        } else {
+          console.log('El estatus code es diferente a 200: StatusCode: ' + statusCode);
+        }
+      })
+      .catch(error => {
+        // Manejar el error
+        console.error('Error:', error);
+      });      
+    
   };
   
   const signUp = async (email, name, password) => {
@@ -184,6 +206,21 @@ export const AuthProvider = (props) => {
   };
 
   const signOut = () => {
+    try {
+      window.sessionStorage.setItem('authenticated', 'false');
+      const modulesStorage ={
+          name: false,
+          edit: false,
+          view: false,
+          create: false,
+          delete: false
+        };
+      sessionStorage.setItem('permissionSet', JSON.stringify(modulesStorage));
+      window.sessionStorage.setItem('userData', null);
+      
+    } catch (err) {
+      console.error(err);
+    }
     dispatch({
       type: HANDLERS.SIGN_OUT
     });

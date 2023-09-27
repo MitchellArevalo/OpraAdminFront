@@ -28,7 +28,7 @@ export const AuthGuard = (props) => {
       ignore.current = true;
       
       let authRole = false;
-      const permissions = JSON.parse(localStorage.getItem('permissionSet'));
+      const permissions = JSON.parse(sessionStorage.getItem('permissionSet'));
       const path = router.pathname.toString();
       let pathFormat = path.replace('/', '');
       switch (pathFormat) {
@@ -46,10 +46,14 @@ export const AuthGuard = (props) => {
           break;
       }
       let permiso = permissions === null?'': permissions.filter(permise => permise.name.toLowerCase() === pathFormat);
-      permiso.map((per, index) => {
-        console.log('valor del view: ' + per.view);
-        authRole = per.view;
-      });
+      if (permiso === '') {
+        
+      }else{
+        permiso.map((per, index) => {
+          console.log('valor del view: ' + per.view);
+          authRole = per.view;
+        });
+      }
 
       if (!isAuthenticated) {
         console.log('Not authenticated, redirecting');

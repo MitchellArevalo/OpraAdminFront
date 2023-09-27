@@ -48,7 +48,7 @@ export const SideNav = (props) => {
               delete: objeto.delete
             };
           });
-          localStorage.setItem('permissionSet', JSON.stringify(modulesStorage));
+          sessionStorage.setItem('permissionSet', JSON.stringify(modulesStorage));
           
         } else {
           console.log('El estatus code es diferente a 200: StatusCode: ' + statusCode);
@@ -57,9 +57,6 @@ export const SideNav = (props) => {
       .catch(error => {
         // Manejar el error
         console.error('Error:', error);
-        // setOpenError(true);
-        // setTypeError('error');
-        // setMessageError('Ocurrió un error al conectarse con la base de datos de los roles y generó la siguiente excepción: ' + error.nombreExcepcion + ': ' + error.mensaje);
       });      
   }, [])
   
