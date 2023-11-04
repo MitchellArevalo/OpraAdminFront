@@ -19,9 +19,9 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { SeverityPill } from 'src/components/severity-pill';
 
 const statusMap = {
-  Pendiente: 'warning',
-  Entregado: 'success',
-  Devuelto: 'error'
+  PENDIENTE: 'warning',
+  APROBADA: 'success',
+  RECHAZADA: 'error'
 };
 
 export const OverviewLatestOrders = (props) => {
@@ -51,7 +51,7 @@ export const OverviewLatestOrders = (props) => {
             </TableHead>
             <TableBody>
               {orders.map((order) => {
-                const createdAt = format(order.createdAt, 'dd/MM/yyyy');
+                // const createdAt = format(order.createdAt, 'dd/MM/yyyy');
 
                 return (
                   <TableRow
@@ -65,7 +65,7 @@ export const OverviewLatestOrders = (props) => {
                       {order.customer.name}
                     </TableCell>
                     <TableCell>
-                      {createdAt}
+                      {order.createdAt}
                     </TableCell>
                     <TableCell>
                       <SeverityPill color={statusMap[order.status]}>
@@ -80,20 +80,7 @@ export const OverviewLatestOrders = (props) => {
         </Box>
       </Scrollbar>
       <Divider />
-      <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button
-          color="inherit"
-          endIcon={(
-            <SvgIcon fontSize="small">
-              <ArrowRightIcon />
-            </SvgIcon>
-          )}
-          size="small"
-          variant="text"
-        >
-          Ver todos
-        </Button>
-      </CardActions>
+     
     </Card>
   );
 };

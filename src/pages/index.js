@@ -21,6 +21,11 @@ const Page = () => {
   const [dataClientes, setDataClientes] = useState([]);
   const [ventasTotales,setVentasTotales] = useState([])
   const [porcentajeDeVenta,setporcentajeDeVenta] = useState([])
+  const [VentasAnuales,setVentasAnuales] = useState([])
+  const [LastestOrders,setLastestOrders] = useState([])
+  const [BetterProduct,setBetterProduct] = useState([])
+  const [OnlineVsFisicas,setOnlineVsFisicas] = useState([])
+  const [TotalProfit,setTotalProfit] = useState()
 
 
   useEffect(() => {   
@@ -37,27 +42,189 @@ const Page = () => {
         console.error('Error:', error);
       });
 
-      var requestOptions = {
+      var requestOptionsSalesMonthly = {
         method: 'GET',
         redirect: 'follow'
       };
       
-      fetch("http://localhost:8083/opradesign/sale", requestOptions)
+      fetch(endpoint+"/opradesign/sale/ventas", requestOptionsSalesMonthly)
         .then(response => response.json())
-        .then(dataVentas => {
-          let meta = 100000;
-          let conteoValueVentas = 0;
-          let profitTotal = 0;
-          dataVentas.forEach(venta => {
-            conteoValueVentas += venta.valorVenta;
-            profitTotal += venta.profitVenta;
-          });
-          ((conteoValueVentas / meta) * 100)
-          setVentasTotales
+        .then(data => {
+          setVentasTotales(data.valorMesActual);
+          let diferencia = data.valorMesAnterior - data.valorMesActual;
+          let porcentaje = (diferencia / (data.valorMesAnterior === 0 ? 1:data.valorMesAnterior)) * 100;
+          let resultado = porcentaje < 0 ? porcentaje * -1: porcentaje;
+          setporcentajeDeVenta(resultado);
         })
-        .catch(error => console.log('error', error));
-    
+        .catch(error => {
+          // Manejar el error
+          console.error('Error:', error);
+        });
+      var requestOptionsAnualSales = {
+        method: 'GET',
+        redirect: 'follow'
+      };
+      
+      fetch(endpoint + "/opradesign/sale/anuales", requestOptionsAnualSales)
+        .then(response => response.json())
+        .then(data => {
+          setVentasAnuales(data);
+          ////console.log(data)
+        })
+        .catch(error => {
+          // Manejar el error
+          console.error('Error:', error);
+        });
+
+        var requestOptionsLastOrders = {
+          method: 'GET',
+          redirect: 'follow'
+        };
+        
+        fetch(endpoint + "/opradesign/sale/recientes", requestOptionsLastOrders)
+          .then(response => response.json())
+          .then(data => {
+            getLastOrdersContructor(data);
+            ////console.log(data)
+          })
+          .catch(error => {
+            // Manejar el error
+            console.error('Error:', error);
+          });
+
+          var requestOptionsBetterProducts = {
+            method: 'GET',
+            redirect: 'follow'
+          };
+          
+          fetch(endpoint + "/opradesign/sale/better", requestOptionsBetterProducts)
+            .then(response => response.json())
+            .then(data => {
+              getBetterProductsContructor(data)
+              ////console.log(data)
+            })
+            .catch(error => {
+              // Manejar el error
+              console.error('Error:', error);
+            });
+
+          var requestOptionsOnlineVsFisicas = {
+            method: 'GET',
+            redirect: 'follow'
+          };
+          
+          fetch(endpoint + "/opradesign/sale/lugar", requestOptionsOnlineVsFisicas)
+            .then(response => response.json())
+            .then(data => {
+              calcularPorcentajeVentas(data)
+              ////console.log(data)
+            })
+            .catch(error => {
+              // Manejar el error
+              console.error('Error:', error);
+            });
+
+            var requestOptionsTotalProfit = {
+              method: 'GET',
+              redirect: 'follow'
+            };
+            
+            fetch(endpoint + "/opradesign/sale/ganancias", requestOptionsTotalProfit)
+              .then(response => response.json())
+              .then(data => {
+                setTotalProfit(data.valorMesActual.toString())
+                //console.log(data.valorMesActual.toString())
+              })
+              .catch(error => {
+                // Manejar el error
+                console.error('Error:', error);
+              });
+
   }, []);
+
+  function getLastOrdersContructor(data) {
+    const newOrders = data.map(order => {
+      return {
+        id: order.idSale,
+        ref: order.idSale,
+        amount: order.valorVenta,
+        customer: {
+          name: order.cliente.nombre
+        },
+        createdAt: order.fechaVenta,
+        status: order.estadoVenta
+      };
+    });
+  
+    setLastestOrders(newOrders);
+  }
+
+  function getBetterProductsContructor(data) {
+    const betterProductsConstructor = data.map(betterProducts => {
+      return {
+        id: betterProducts.id,
+        image: betterProducts.image,
+        name: betterProducts.name,
+        salesPrice: betterProducts.salesPrice,
+      };
+    });
+  
+    setBetterProduct(betterProductsConstructor);
+  }
+
+  function calcularPorcentajeVentas(data) {
+    let totalVentas = data.cantidadVentasLocales + data.cantidadVentasWebsite;
+    let porcentajeVentasLocales = (data.cantidadVentasLocales / totalVentas) * 100;
+    let porcentajeVentasWebsite = (data.cantidadVentasWebsite / totalVentas) * 100;
+  
+    let resultado = []
+    resultado.push(parseFloat(porcentajeVentasWebsite.toFixed(2)));
+    resultado.push(parseFloat(porcentajeVentasLocales.toFixed(2)));
+
+    //console.log(resultado);
+    setOnlineVsFisicas(resultado)
+   
+  }
+
+  function formatearMoneda(numero) {
+    if (numero === undefined || numero === null) {
+      return null
+    }else{
+      let unidades = ["", "K", "M", "B", "T"];
+      let contador = 0;
+      let esNegativo = false;
+    
+      if (numero < 0) {
+        esNegativo = true;
+        numero = Math.abs(numero);
+      }
+    
+      while (numero >= 1000) {
+        numero /= 1000;
+        contador++;
+      }
+    
+      //console.log('este es el numero' + numero)
+      let texto = numero.toString();
+      let partes = texto.split('.');
+      let decimal;
+    
+      if (partes.length > 1) {
+        decimal = partes[1].substring(0, 2);
+      }
+    
+      let numeroFormateado = esNegativo ? '-$' + partes[0] + '.' + decimal + unidades[contador]: '$' + partes[0] + '.' + decimal + unidades[contador];
+    
+      return numeroFormateado;
+    }
+   
+  }
+
+  function calcularPorcentajeCumplimiento() {
+    var porcentaje = (ventasTotales / 1000000000) * 100;
+    return porcentaje.toFixed(2);
+  };
+
   return(
   <>
     <Head>
@@ -85,8 +252,8 @@ const Page = () => {
             <OverviewBudget
               positive
               sx={{ height: '100%' }}
-              value="$200k"
-              difference={12}
+              value= {formatearMoneda(ventasTotales)}
+              difference={porcentajeDeVenta}
             />
           </Grid>
           <Grid
@@ -108,7 +275,7 @@ const Page = () => {
           >
             <OverviewTasksProgress
               sx={{ height: '100%' }}
-              value={45}
+              value={calcularPorcentajeCumplimiento()}
             />
           </Grid>
           <Grid
@@ -118,7 +285,7 @@ const Page = () => {
           >
             <OverviewTotalProfit
               sx={{ height: '100%' }}
-              value="$15k"
+              value= {formatearMoneda(TotalProfit)}
             />
           </Grid>
           <Grid
@@ -129,7 +296,7 @@ const Page = () => {
               chartSeries={[
                 {
                   name: 'Este año',
-                  data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20]
+                  data: VentasAnuales
                 }
               ]}
               sx={{ height: '100%' }}
@@ -140,11 +307,11 @@ const Page = () => {
             md={6}
             lg={4}
           >
-            <OverviewTraffic
-              chartSeries={[45, 55]}
-              labels={['Virtual', 'Fisico']}
-              sx={{ height: '100%' }}
-            />
+          <OverviewTraffic
+            chartSeries={OnlineVsFisicas}
+            labels={['Virtual', 'Fisico']}
+            sx={{ height: '100%' }}
+          />
           </Grid>
           <Grid
             xs={12}
@@ -152,38 +319,7 @@ const Page = () => {
             lg={4}
           >
             <OverviewLatestProducts
-              products={[
-                {
-                  id: '5ece2c077e39da27658aa8a9',
-                  image: '/assets/products/product-1.png',
-                  name: 'Healthcare Erbology',
-                  updatedAt: subHours(now, 6).getTime()
-                },
-                {
-                  id: '5ece2c0d16f70bff2cf86cd8',
-                  image: '/assets/products/product-2.png',
-                  name: 'Makeup Lancome Rouge',
-                  updatedAt: subDays(subHours(now, 8), 2).getTime()
-                },
-                {
-                  id: 'b393ce1b09c1254c3a92c827',
-                  image: '/assets/products/product-5.png',
-                  name: 'Skincare Soja CO',
-                  updatedAt: subDays(subHours(now, 1), 1).getTime()
-                },
-                {
-                  id: 'a6ede15670da63f49f752c89',
-                  image: '/assets/products/product-6.png',
-                  name: 'Makeup Lipstick',
-                  updatedAt: subDays(subHours(now, 3), 3).getTime()
-                },
-                {
-                  id: 'bcad5524fe3a2f8f8620ceda',
-                  image: '/assets/products/product-7.png',
-                  name: 'Healthcare Ritual',
-                  updatedAt: subDays(subHours(now, 5), 6).getTime()
-                }
-              ]}
+              products={BetterProduct}
               sx={{ height: '100%' }}
             />
           </Grid>
@@ -193,68 +329,7 @@ const Page = () => {
             lg={8}
           >
             <OverviewLatestOrders
-              orders={[
-                {
-                  id: 'f69f88012978187a6c12897f',
-                  ref: 'DEV1049',
-                  amount: 30.5,
-                  customer: {
-                    name: 'Ekaterina Tankova'
-                  },
-                  createdAt: 1555016400000,
-                  status: 'Pendiente'
-                },
-                {
-                  id: '9eaa1c7dd4433f413c308ce2',
-                  ref: 'DEV1048',
-                  amount: 25.1,
-                  customer: {
-                    name: 'Cao Yu'
-                  },
-                  createdAt: 1555016400000,
-                  status: 'Entregado'
-                },
-                {
-                  id: '01a5230c811bd04996ce7c13',
-                  ref: 'DEV1047',
-                  amount: 10.99,
-                  customer: {
-                    name: 'Alexa Richardson'
-                  },
-                  createdAt: 1554930000000,
-                  status: 'Devuelto'
-                },
-                {
-                  id: '1f4e1bd0a87cea23cdb83d18',
-                  ref: 'DEV1046',
-                  amount: 96.43,
-                  customer: {
-                    name: 'Anje Keizer'
-                  },
-                  createdAt: 1554757200000,
-                  status: 'Pendiente'
-                },
-                {
-                  id: '9f974f239d29ede969367103',
-                  ref: 'DEV1045',
-                  amount: 32.54,
-                  customer: {
-                    name: 'Clarke Gillebert'
-                  },
-                  createdAt: 1554670800000,
-                  status: 'Entregado'
-                },
-                {
-                  id: 'ffc83c1560ec2f66a1c05596',
-                  ref: 'DEV1044',
-                  amount: 16.76,
-                  customer: {
-                    name: 'Adam Denisov'
-                  },
-                  createdAt: 1554670800000,
-                  status: 'Entregado'
-                }
-              ]}
+              orders={LastestOrders}
               sx={{ height: '100%' }}
             />
           </Grid>

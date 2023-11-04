@@ -61,7 +61,7 @@ export const OverviewBudget = (props) => {
                 color={positive ? 'success.main' : 'error.main'}
                 variant="body2"
               >
-                {difference}%
+                {difference > 100 ? '<':''}{difference > 100 ? 100:difference}%
               </Typography>
             </Stack>
             <Typography

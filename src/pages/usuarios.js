@@ -649,21 +649,30 @@ const Page = () => {
     switch (event.target.id) {
       case 'name':
         // console.log('valor name: ' + event.target.value);
-        setDataForm({
-          ...dataForm,
-          name: event.target.value,
-          errorNombre: false
-        })
+        if (/^\d+$/.test(event.target.value)) {
+          alert('No se permiten valores numéricos en este campo');
+        }else{
+          setDataForm({
+            ...dataForm,
+            name: event.target.value,
+            errorNombre: false
+          })
+        }
+        
         break;
       case 'documento':
         // console.log('valor documento: ' + event.target.value);
-        if (event.target.value.length < 11) {
+        if (event.target.value.length < 11 && event.target.value > 0) {
           setDataForm({
             ...dataForm,
             documento: event.target.value,
             errorDocumento: false
           })
-        } else {
+        }else if(event.target.value < 0){
+          setOpenError(true);
+          setTypeError('warning');
+          setMessageError('no se pueden poner números negativos en el documento')
+        }else if(event.target.value.length > 11){
           setOpenError(true);
           setTypeError('warning');
           setMessageError('El documento no puede tener mas de 10 carácteres')
@@ -679,12 +688,16 @@ const Page = () => {
         break;
       case 'telefono':
         setDataForm({ ...dataForm, errorTelefono: false })
-        if (event.target.value.length < 11) {
+        if (event.target.value.length < 11 && event.target.value > 0) {
           setDataForm({ ...dataForm, telefono: event.target.value })
-        } else {
+        } else if(event.target.value < 0){
           setOpenError(true);
           setTypeError('warning');
-          setMessageError('El número del teléfono no puede tener mas de 10 carácteres')
+          setMessageError('no se pueden poner números negativos en el teléfono')
+        }else if(event.target.value.length > 11){
+          setOpenError(true);
+          setTypeError('warning');
+          setMessageError('El teléfono no puede tener mas de 10 carácteres')
         }
         break;
       case 'password':

@@ -12,7 +12,7 @@ export const OverviewTotalProfit = (props) => {
           alignItems="flex-start"
           direction="row"
           justifyContent="space-between"
-          spacing={3}
+          spacing={4}
         >
           <Stack spacing={1}>
             <Typography
@@ -21,7 +21,7 @@ export const OverviewTotalProfit = (props) => {
             >
               Ganancia neta mensual
             </Typography>
-            <Typography variant="h4">
+            <Typography variant="h5">
               {value}
             </Typography>
           </Stack>

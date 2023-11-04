@@ -20,13 +20,24 @@ import {
 export const OverviewLatestProducts = (props) => {
   const { products = [], sx } = props;
 
+  function formatearMoneda(numero) {
+    let unidades = ["", "K", "M", "B", "T"];
+    let contador = 0;
+    
+    while (numero >= 1000) {
+      numero /= 1000;
+      contador++;
+    }
+    
+    return numero.toFixed(2) + unidades[contador];
+  }
+
   return (
     <Card sx={sx}>
       <CardHeader title="Productos más vendidos" />
       <List>
         {products.map((product, index) => {
           const hasDivider = index < products.length - 1;
-          const ago = formatDistanceToNow(product.updatedAt);
 
           return (
             <ListItem
@@ -62,7 +73,7 @@ export const OverviewLatestProducts = (props) => {
               <ListItemText
                 primary={product.name}
                 primaryTypographyProps={{ variant: 'subtitle1' }}
-                secondary={`Updated ${ago} ago`}
+                secondary={`Precio de venta $ ${formatearMoneda(product.salesPrice)}`}
                 secondaryTypographyProps={{ variant: 'body2' }}
               />
               {/* <IconButton edge="end">
